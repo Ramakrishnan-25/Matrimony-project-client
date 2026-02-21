@@ -182,6 +182,12 @@ export const unblockProfile = async (userId, blockedUserId) => {
   }
 };
 
+export const downloadInvoice = (userId, transactionId) => {
+  return userInstance.get(
+    `/download-invoice/${userId}/${transactionId}`,
+    { responseType: "blob" }
+  );
+};
 
 // Get ignored profiles
 export const getIgnoredProfilesData = async (userId) => {
@@ -254,32 +260,6 @@ export const cancelUserPlan = async (userId, cancelData) => {
 //     throw error;
 //   }
 // };
-export const downloadInvoice = async (userId, subscriptionTransactionId) => {
-  try {
-    const response = await userInstance.get(
-      `/download-invoice/${userId}/${subscriptionTransactionId}`, // backend-la irukkira ID
-      {
-        responseType: "blob", // PDF download-ku important
-      }
-    );
-
-    // Optional: direct download
-    const url = window.URL.createObjectURL(response.data);
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", `invoice_${subscriptionTransactionId}.pdf`);
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-
-    return response;
-  } catch (error) {
-    console.error("Download error:", error);
-    throw error;
-  }
-};
-
-
 
 // export const checkInterestStatus = async (userId, profileId) => {
 //   try {

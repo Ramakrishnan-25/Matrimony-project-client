@@ -6,12 +6,14 @@ import {
   getAllPlanDetails,
   sendPaymentData,
 } from "../../api/axiosService/userAuthService";
+import { useNavigate } from "react-router-dom";
 
 const UserPlanSelection = () => {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -267,6 +269,7 @@ const UserPlanSelection = () => {
                 industry.{" "}
               </p>
               <span className="nocre">No credit card required</span>
+              
             </div>
           </div>
         </div>
@@ -280,61 +283,58 @@ const UserPlanSelection = () => {
               {/* Carousel Navigation - Only show if more than 3 plans */}
               {plans.length > 3 && (
                 <>
-                  <button
-                    onClick={prevSlide}
-                    style={{
-                      position: "absolute",
-                      left: "-50px",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      zIndex: 10,
-                      background: "#a020f0",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "50%",
-                      width: "50px",
-                      height: "50px",
-                      fontSize: "18px",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
-                      transition: "all 0.3s ease",
-                    }}
-                    onMouseOver={(e) => (e.target.style.background = "#8b1a9e")}
-                    onMouseOut={(e) => (e.target.style.background = "#a020f0")}
-                  >
-                    <i className="fa fa-chevron-left" aria-hidden="true"></i>
-                  </button>
+                 {/* LEFT */}
+<button
+  onClick={prevSlide}
+  style={{
+    position: "absolute",
+    left: "-50px",
+    top: "50%",
+    transform: "translateY(-50%)",
+    zIndex: 10,
+    background: "#a020f0",
+    color: "white",
+    border: "none",
+    borderRadius: "50%",
+    width: "50px",
+    height: "50px",
+    fontSize: "22px",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+  }}
+>
+  ←
+</button>
 
-                  <button
-                    onClick={nextSlide}
-                    style={{
-                      position: "absolute",
-                      right: "-50px",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      zIndex: 10,
-                      background: "#a020f0",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "50%",
-                      width: "50px",
-                      height: "50px",
-                      fontSize: "18px",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
-                      transition: "all 0.3s ease",
-                    }}
-                    onMouseOver={(e) => (e.target.style.background = "#8b1a9e")}
-                    onMouseOut={(e) => (e.target.style.background = "#a020f0")}
-                  >
-                    <i className="fa fa-chevron-right" aria-hidden="true"></i>
-                  </button>
+{/* RIGHT */}
+<button
+  onClick={nextSlide}
+  style={{
+    position: "absolute",
+    right: "-50px",
+    top: "50%",
+    transform: "translateY(-50%)",
+    zIndex: 10,
+    background: "#a020f0",
+    color: "white",
+    border: "none",
+    borderRadius: "50%",
+    width: "50px",
+    height: "50px",
+    fontSize: "22px",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+  }}
+>
+  →
+</button>
+
                 </>
               )}
 

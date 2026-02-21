@@ -166,56 +166,64 @@ const ShortListedProfile = () => {
                     <div className="db-pro-stat">
                       {/* Tab Navigation */}
                       <div className="mb-4">
-                        <ul className="nav nav-tabs" role="tablist">
-                          <li className="nav-item" role="presentation">
-                            <button
-                              className={`nav-link ${
-                                activeTab === "byYou" ? "active" : ""
-                              }`}
-                              onClick={() => setActiveTab("byYou")}
-                              type="button"
-                              role="tab"
-                            >
-                              <i className="fa fa-heart me-2"></i>
-                              Shortlisted By You
-                            </button>
-                          </li>
-                          <li className="nav-item" role="presentation">
-                            <button
-                              className={`nav-link ${
-                                activeTab === "whoShortlisted" ? "active" : ""
-                              }`}
-                              onClick={() => setActiveTab("whoShortlisted")}
-                              type="button"
-                              role="tab"
-                            >
-                              <i className="fa fa-users me-2"></i>
-                              Who Shortlisted You
-                            </button>
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div className="db-inte-main">
-                        <div className="tab-content">
-                          {/* Shortlisted By You Tab */}
-                          <div
-                            className={`tab-pane fade ${
-                              activeTab === "byYou" ? "show active" : ""
-                            }`}
+                        <div style={{ overflowX: "auto" }}>
+                          <ul
+                            className="nav nav-tabs"
+                            role="tablist"
+                            style={{
+                              display: "flex",
+                              flexWrap: "nowrap",
+                              whiteSpace: "nowrap",
+                            }}
                           >
-                            {renderProfileList(profileDataByYou)}
-                          </div>
+                            <li className="nav-item" role="presentation" style={{ flex: "0 0 auto" }}>
+                              <button
+                                className={`nav-link ${activeTab === "byYou" ? "active" : ""
+                                  }`}
+                                style={{ whiteSpace: "nowrap" }}
+                                onClick={() => setActiveTab("byYou")}
+                                type="button"
+                                role="tab"
+                              >
+                                <i className="fa fa-heart me-2"></i>
+                                Shortlisted By You
+                              </button>
+                            </li>
+                            <li className="nav-item" role="presentation" style={{ flex: "0 0 auto" }}>
+                              <button
+                                className={`nav-link ${activeTab === "whoShortlisted" ? "active" : ""
+                                  }`}
+                                style={{ whiteSpace: "nowrap" }}
+                                onClick={() => setActiveTab("whoShortlisted")}
+                                type="button"
+                                role="tab"
+                              >
+                                <i className="fa fa-users me-2"></i>
+                                Who Shortlisted You
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
 
-                          {/* Who Shortlisted You Tab */}
-                          <div
-                            className={`tab-pane fade ${
-                              activeTab === "whoShortlisted"
-                                ? "show active"
-                                : ""
-                            }`}
-                          >
-                            {renderProfileList(profileDataWhoShortlisted)}
+                        <div className="db-inte-main">
+                          <div className="tab-content">
+                            {/* Shortlisted By You Tab */}
+                            <div
+                              className={`tab-pane fade ${activeTab === "byYou" ? "show active" : ""
+                                }`}
+                            >
+                              {renderProfileList(profileDataByYou)}
+                            </div>
+
+                            {/* Who Shortlisted You Tab */}
+                            <div
+                              className={`tab-pane fade ${activeTab === "whoShortlisted"
+                                  ? "show active"
+                                  : ""
+                                }`}
+                            >
+                              {renderProfileList(profileDataWhoShortlisted)}
+                            </div>
                           </div>
                         </div>
                       </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
+import "./UserProfile.css";
 import UserSideBar from "../components/UserSideBar";
 import Footer from "../components/Footer";
 import CopyRights from "../components/CopyRights";
@@ -21,7 +21,7 @@ const InfoRow = ({ label, value }) => {
         borderBottom: "1px solid #f0f0f0",
       }}
     >
-      <span style={{ color: "#666", fontWeight: "500", minWidth: "200px" }}>
+      <span style={{ color: "#666", fontWeight: "500", minWidth: "150px" }}>
         {label}:
       </span>
       <span
@@ -357,7 +357,7 @@ const UserProfilePage = () => {
     return age;
   };
 
-    
+
 
 
   return (
@@ -377,7 +377,7 @@ const UserProfilePage = () => {
             <div className="row" style={{ marginLeft: 0, marginRight: 0 }}>
               {/* Sidebar - Left Column */}
               <div
-                className="col-md-3 col-lg-2"
+                className="col-12 col-md-3 col-lg-2"
                 style={{ paddingLeft: 0, marginLeft: "0px" }}
               >
                 <UserSideBar />
@@ -385,12 +385,12 @@ const UserProfilePage = () => {
 
               {/* Profile Content - Right Column with Vertical Scroll */}
               <div
-                className="col-md-9 col-lg-10"
+                className="col-12 col-md-9 col-lg-10"
                 style={{
                   paddingLeft: "20px",
                   paddingRight: "15px",
-                  height: "calc(100vh - 80px)",
-                  overflowY: "auto",
+                  height: "auto",
+                  overflow: "visible",
                   overflowX: "hidden",
                 }}
               >
@@ -402,6 +402,8 @@ const UserProfilePage = () => {
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
+                        flexWrap: "wrap",
+                        gap: "10px",
                         marginBottom: "20px",
                       }}
                     >
@@ -410,7 +412,7 @@ const UserProfilePage = () => {
                       </h2>
                       <Link
                         to={`/user/user-profile-edit-page/${userId}`}
-                        className="btn btn-primary"
+                        className="btn btn-primary edit-btn"
                         style={{
                           padding: "10px 24px",
                           fontSize: "14px",
@@ -433,8 +435,10 @@ const UserProfilePage = () => {
                       className="db-profile"
                       style={{
                         display: "flex",
+                        flexDirection: "row",
                         alignItems: "center",
                         gap: "25px",
+                        flexWrap: "wrap",
                         padding: "25px",
                         background: "#fff",
                         borderRadius: "10px",
@@ -442,7 +446,7 @@ const UserProfilePage = () => {
                       }}
                     >
                       <div
-                        className="img overflow-hidden rounded-full flex items-center justify-center bg-gray-200"
+                        className="img profile-img overflow-hidden rounded-full flex items-center justify-center bg-gray-200"
                         style={{
                           width: "130px",
                           height: "130px",
@@ -483,123 +487,127 @@ const UserProfilePage = () => {
                           />
                         )}
                       </div>
-
-                      <div className="profile-info" style={{ flex: 1 }}>
+                      <div
+                        className="profile-info"
+                        style={{
+                          flex: 1,
+                          width: "100%",
+                        }}
+                      >
                         <div className="user-details">
                           <h3
                             style={{
-                              margin: "0 0 15px 0",
-                              fontSize: "2rem",
+                              margin: "0 0 10px 0",
+                              fontSize: "clamp(1.3rem, 4vw, 2rem)", // ✅ responsive font
                               fontWeight: "700",
                               color: "#333",
+                              wordBreak: "break-word",
                             }}
                           >
                             {userInfo?.userName || "User Name"}
                           </h3>
+
                           <div
                             style={{
                               display: "flex",
                               flexDirection: "column",
-                              gap: "10px",
+                              gap: "8px",
                             }}
                           >
+                            {/* USER ID */}
                             <p
                               style={{
                                 margin: "0",
                                 color: "#666",
-                                fontSize: "1rem",
+                                fontSize: "clamp(0.85rem, 3vw, 1rem)",
                                 display: "flex",
-                                alignItems: "center",
-                                gap: "10px",
+                                alignItems: "flex-start",
+                                gap: "8px",
+                                flexWrap: "wrap", // ✅ important
                               }}
                             >
-                              <i
-                                className="fa fa-id-card"
-                                style={{ color: "#7c3aed", width: "18px" }}
-                              ></i>
+                              <i className="fa fa-id-card" style={{ color: "#7c3aed" }}></i>
                               <span style={{ fontWeight: "500" }}>
-                                <strong style={{ color: "#333" }}>
-                                  User ID:
-                                </strong>{" "}
+                                <strong style={{ color: "#333" }}>User ID:</strong>{" "}
                                 {userInfo?.agwid || "Not provided"}
                               </span>
                             </p>
 
+                            {/* MOBILE */}
                             <p
                               style={{
                                 margin: "0",
                                 color: "#666",
-                                fontSize: "1rem",
+                                fontSize: "clamp(0.85rem, 3vw, 1rem)",
                                 display: "flex",
-                                alignItems: "center",
-                                gap: "10px",
+                                alignItems: "flex-start",
+                                gap: "8px",
+                                flexWrap: "wrap",
                               }}
                             >
-                              <i
-                                className="fa fa-phone"
-                                style={{ color: "#7c3aed", width: "18px" }}
-                              ></i>
-                              <span style={{ fontWeight: "500" }}>
+                              <i className="fa fa-phone" style={{ color: "#7c3aed" }}></i>
+                              <span style={{ fontWeight: "500", wordBreak: "break-word" }}>
                                 {userInfo?.userMobile || "Not provided"}
                               </span>
                             </p>
+
+                            {/* EMAIL */}
                             <p
                               style={{
                                 margin: "0",
                                 color: "#666",
-                                fontSize: "1rem",
+                                fontSize: "clamp(0.85rem, 3vw, 1rem)",
                                 display: "flex",
-                                alignItems: "center",
-                                gap: "10px",
+                                alignItems: "flex-start",
+                                gap: "8px",
+                                flexWrap: "wrap",
                               }}
                             >
-                              <i
-                                className="fa fa-envelope"
-                                style={{ color: "#7c3aed", width: "18px" }}
-                              ></i>
-                              <span style={{ fontWeight: "500" }}>
+                              <i className="fa fa-envelope" style={{ color: "#7c3aed" }}></i>
+                              <span style={{ fontWeight: "500", wordBreak: "break-word" }}>
                                 {userInfo?.userEmail || "Not provided"}
                               </span>
                             </p>
+
+                            {/* BADGES */}
                             <div
                               style={{
-                                marginTop: "5px",
+                                marginTop: "8px",
                                 display: "flex",
-                                gap: "10px",
-                                alignItems: "center",
+                                gap: "8px",
+                                flexWrap: "wrap", // ✅ wraps on mobile
                               }}
                             >
                               <span
-                                className={`badge ${
-                                  completionPercentage >= 75
+                                className={`badge ${completionPercentage >= 75
                                     ? "bg-success"
                                     : completionPercentage >= 50
                                       ? "bg-info"
                                       : completionPercentage >= 25
                                         ? "bg-warning text-dark"
                                         : "bg-secondary"
-                                }`}
+                                  }`}
                                 style={{
-                                  padding: "8px 16px",
-                                  fontSize: "0.9rem",
+                                  padding: "6px 12px",
+                                  fontSize: "clamp(0.7rem, 2.5vw, 0.9rem)",
                                   fontWeight: "600",
                                   borderRadius: "20px",
                                 }}
                               >
                                 {completionPercentage}% Completed
                               </span>
+
                               <span
                                 className="badge bg-info"
                                 style={{
-                                  padding: "8px 16px",
-                                  fontSize: "0.9rem",
+                                  padding: "6px 12px",
+                                  fontSize: "clamp(0.7rem, 2.5vw, 0.9rem)",
                                   fontWeight: "600",
                                   borderRadius: "20px",
                                 }}
                               >
                                 {visibility}
                               </span>
-
                             </div>
                           </div>
                         </div>
@@ -664,14 +672,14 @@ const UserProfilePage = () => {
                       value={
                         userInfo?.dateOfBirth
                           ? `${calculateAge(
-                              userInfo.dateOfBirth,
-                            )} years / ${new Date(
-                              userInfo.dateOfBirth,
-                            ).toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                            })}`
+                            userInfo.dateOfBirth,
+                          )} years / ${new Date(
+                            userInfo.dateOfBirth,
+                          ).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })}`
                           : null
                       }
                     />
@@ -712,17 +720,17 @@ const UserProfilePage = () => {
 
                     {(userInfo?.maritalStatus === "Divorced" ||
                       userInfo?.maritalStatus === "Awaiting Divorce") && (
-                      <>
-                        <InfoRow
-                          label="Divorced Month & Year"
-                          value={userInfo?.divorcedMonthYear}
-                        />
-                        <InfoRow
-                          label="Reason for Divorce"
-                          value={userInfo?.reasonForDivorce}
-                        />
-                      </>
-                    )}
+                        <>
+                          <InfoRow
+                            label="Divorced Month & Year"
+                            value={userInfo?.divorcedMonthYear}
+                          />
+                          <InfoRow
+                            label="Reason for Divorce"
+                            value={userInfo?.reasonForDivorce}
+                          />
+                        </>
+                      )}
 
                     <InfoRow
                       label="Eating Habits"

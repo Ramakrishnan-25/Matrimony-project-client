@@ -118,9 +118,8 @@ const UserInterest = () => {
 
     return (
       <div
-        className={`alert ${
-          notification.type === "success" ? "alert-success" : "alert-danger"
-        } alert-dismissible fade show`}
+        className={`alert ${notification.type === "success" ? "alert-success" : "alert-danger"
+          } alert-dismissible fade show`}
         role="alert"
       >
         {notification.message}
@@ -320,45 +319,59 @@ const UserInterest = () => {
                         </ul>
                       </div>
                       <div className="db-inte-main">
-                        <ul className="nav nav-tabs" role="tablist">
-                          <li className="nav-item">
-                            <button
-                              className={`nav-link ${
-                                activeTab === "pending" ? "active" : ""
-                              }`}
-                              type="button"
-                              onClick={() => handleTabChange("pending")}
-                            >
-                              New requests
-                            </button>
-                          </li>
-                          <li className="nav-item">
-                            <button
-                              className={`nav-link ${
-                                activeTab === "accepted" ? "active" : ""
-                              }`}
-                              type="button"
-                              onClick={() => handleTabChange("accepted")}
-                            >
-                              Accept request
-                            </button>
-                          </li>
-                          <li className="nav-item">
-                            <button
-                              className={`nav-link ${
-                                activeTab === "rejected" ? "active" : ""
-                              }`}
-                              type="button"
-                              onClick={() => handleTabChange("rejected")}
-                            >
-                              Reject request
-                            </button>
-                          </li>
-                        </ul>
-                        <div className="tab-content">
-                          <div className="container tab-pane active">
-                            <br />
-                            {renderProfileList()}
+                        <div
+                          style={{
+                            overflowX: "auto",
+                          }}
+                        >
+                          <ul
+                            className="nav nav-tabs"
+                            role="tablist"
+                            style={{
+                              flexWrap: "nowrap",
+                              display: "flex",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            <li className="nav-item" style={{ flex: "0 0 auto" }}>
+                              <button
+                                className={`nav-link ${activeTab === "pending" ? "active" : ""
+                                  }`}
+                                style={{ whiteSpace: "nowrap" }}
+                                type="button"
+                                onClick={() => handleTabChange("pending")}
+                              >
+                                New Requests
+                              </button>
+                            </li>
+                            <li className="nav-item" style={{ flex: "0 0 auto" }}>
+                              <button
+                                className={`nav-link ${activeTab === "accepted" ? "active" : ""
+                                  }`}
+                                style={{ whiteSpace: "nowrap" }}
+                                type="button"
+                                onClick={() => handleTabChange("accepted")}
+                              >
+                                Accept Request
+                              </button>
+                            </li>
+                            <li className="nav-item" style={{ flex: "0 0 auto" }}>
+                              <button
+                                className={`nav-link ${activeTab === "rejected" ? "active" : ""
+                                  }`}
+                                style={{ whiteSpace: "nowrap" }}
+                                type="button"
+                                onClick={() => handleTabChange("rejected")}
+                              >
+                                Reject Request
+                              </button>
+                            </li>
+                          </ul>
+                          <div className="tab-content">
+                            <div className="container tab-pane active">
+                              <br />
+                              {renderProfileList()}
+                            </div>
                           </div>
                         </div>
                       </div>

@@ -329,8 +329,8 @@ import LayoutComponent from "../components/layouts/LayoutComponent";
 import planIcon from "../assets/images/icon/plan.png";
 import {
   cancelUserPlan,
-   getMyActivePlanData,
-  downloadInvoice, // ✅ NEW
+  getMyActivePlanData,
+  downloadInvoice
 } from "../api/axiosService/userAuthService";
 
 const UserPlanPage = () => {
@@ -351,60 +351,67 @@ const UserPlanPage = () => {
   // =========================
   // ✅ FETCH PLAN
   // =========================
- useEffect(() => {
-     const fetchData = async () => {
-       try {
-         setLoading(true);
-         const response = await getMyActivePlanData(userId);
-         console.log(response.data.activePlan);
-         if (response.status === 200) {
-           setPlanData(response?.data?.activePlan);
-         } else {
-           setError("No active plan found");
-         }
-       } catch (err) {
-         setError(err?.response?.data?.message);
-         console.error("Error fetching plan data:", err);
-       } finally {
-         setLoading(false);
-       }
-     };
- 
-     if (userId) {
-       fetchData();
-     }
-   }, [userId]);
- 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await getMyActivePlanData(userId);
+        console.log(response.data.activePlan);
+        if (response.status === 200) {
+          setPlanData(response?.data?.activePlan);
+        } else {
+          setError("No active plan found");
+        }
+      } catch (err) {
+        setError(err?.response?.data?.message);
+        console.error("Error fetching plan data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (userId) {
+      fetchData();
+    }
+  }, [userId]);
+
 
   // =========================
   // ✅ DOWNLOAD INVOICE
   // =========================
-  const handleDownload = async (paymentId) => {
+  const handleDownload = async (userId, transactionId) => {
     try {
-      setDownloadingId(paymentId);
+      if (!userId || !transactionId) {
+        console.log("Missing values:", userId, transactionId);
+        alert("Missing data ❌");
+        return;
+      }
 
-      const res = await downloadInvoice(userId, paymentId);
+      console.log("Downloading:", userId, transactionId);
 
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement("a");
+      setDownloadingId(transactionId);
 
-      link.href = url;
-      link.setAttribute("download", `invoice-${paymentId}.pdf`);
+      // ✅ USE AXIOS FUNCTION
+      const res = await downloadInvoice(userId, transactionId);
 
-      document.body.appendChild(link);
-      link.click();
+      const blob = new Blob([res.data], { type: "application/pdf;charset=utf-8" });
+      const url = window.URL.createObjectURL(blob);
 
-      link.remove();
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `invoice-${transactionId}-${planData?.subscriptionOrderId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
 
+      window.URL.revokeObjectURL(url);
       setDownloadingId(null);
 
-    } catch (err) {
-      console.error("Download error:", err);
+    } catch (error) {
+      console.error("Download error:", error);
       setDownloadingId(null);
-      alert("Invoice download failed");
     }
   };
-
   // =========================
   // ✅ CANCEL PLAN (UNCHANGED)
   // =========================
@@ -501,38 +508,38 @@ const UserPlanPage = () => {
                         <img src={planIcon} alt="" />
                       </div>
 
-                     <div className="db-plan-detil">
-  {loading ? (
-    <p>Loading...</p>
-  ) : !planData ? (
-    <div>
-      <p style={{ color: "red" }}>❌ No active subscription</p>
-      <a href="/user/user-plan-selection" className="cta-3">
-        Subscribe Now
-      </a>
-    </div>
-  ) : (
-    <ul>
-      <li>
-        Plan name: <strong>{planData.subscriptionType}</strong>
-      </li>
-      <li>
-        Valid from: <strong>{planData.subscriptionValidFrom}</strong>
-      </li>
-      <li>
-        Valid till: <strong>{planData.subscriptionValidTo}</strong>
-      </li>
-      <li>
-        Amount: <strong>₹{planData.subscriptionAmount}</strong>
-      </li>
-      <li>
-        <a href="/user/user-plan-selection" className="cta-3">
-          Upgrade now
-        </a>
-      </li>
-    </ul>
-  )}
-</div>
+                      <div className="db-plan-detil">
+                        {loading ? (
+                          <p>Loading...</p>
+                        ) : !planData ? (
+                          <div>
+                            <p style={{ color: "red" }}>❌ No active subscription</p>
+                            <a href="/user/user-plan-selection" className="cta-3">
+                              Subscribe Now
+                            </a>
+                          </div>
+                        ) : (
+                          <ul>
+                            <li>
+                              Plan name: <strong>{planData.subscriptionType}</strong>
+                            </li>
+                            <li>
+                              Valid from: <strong>{planData.subscriptionValidFrom}</strong>
+                            </li>
+                            <li>
+                              Valid till: <strong>{planData.subscriptionValidTo}</strong>
+                            </li>
+                            <li>
+                              Amount: <strong>₹{planData.subscriptionAmount}</strong>
+                            </li>
+                            <li>
+                              <a href="/user/user-plan-selection" className="cta-3">
+                                Upgrade now
+                              </a>
+                            </li>
+                          </ul>
+                        )}
+                      </div>
 
                     </div>
                   </div>
@@ -541,8 +548,19 @@ const UserPlanPage = () => {
                   <div className="col-md-8 db-sec-com">
                     <h2 className="db-tit">All invoice</h2>
 
-                    <div className="db-invoice">
-                      <table className="table table-bordered">
+                    <div
+                      className="db-invoice"
+                      style={{
+                        width: "100%",
+                        overflowX: "auto",   // ✅ enables horizontal scroll
+                      }}
+                    >
+                      <table
+                        className="table table-bordered"
+                        style={{
+                          minWidth: "600px", // ✅ prevents table from shrinking
+                        }}
+                      >
                         <thead>
                           <tr>
                             <th>Plan type</th>
@@ -554,34 +572,34 @@ const UserPlanPage = () => {
                         </thead>
 
                         <tbody>
-  {planData ? (
-    [planData].map((item, index) => (
-      <tr key={index}>
-        <td>{item.subscriptionType}</td>
-        <td>
-          {item.subscriptionValidFrom} - {item.subscriptionValidTo}
-        </td>
-        <td>₹{item.subscriptionAmount}</td>
-        <td style={{ color: "green", fontWeight: 600 }}>Active</td>
-        <td>
-          <button
-            className="cta-dark cta-sml"
-            onClick={() => handleDownload(item._id)}
-            disabled={downloadingId === item._id}
-          >
-            {downloadingId === item._id ? "Downloading..." : "Download"}
-          </button>
-        </td>
-      </tr>
-    ))
-  ) : (
-    <tr>
-      <td colSpan="5" style={{ textAlign: "center" }}>
-        No invoices found
-      </td>
-    </tr>
-  )}
-</tbody>
+                          {planData ? (
+                            [planData].map((item, index) => (
+                              <tr key={index}>
+                                <td>{item.subscriptionType}</td>
+                                <td>
+                                  {item.subscriptionValidFrom} - {item.subscriptionValidTo}
+                                </td>
+                                <td>₹{item.subscriptionAmount}</td>
+                                <td style={{ color: "green", fontWeight: 600 }}>Active</td>
+                                <td>
+                                  <button
+                                    className="cta-dark cta-sml"
+                                    onClick={() => handleDownload(userId, item.subscriptionTransactionId)}
+                                    disabled={downloadingId === item._id}
+                                  >
+                                    {downloadingId === item._id ? "Downloading..." : "Download"}
+                                  </button>
+                                </td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan="5" style={{ textAlign: "center" }}>
+                                No invoices found
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
 
 
                       </table>
