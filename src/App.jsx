@@ -40,7 +40,13 @@ import GlobalSearchModal from "./components/GlobalSearchModal";
 import HelpAndSupport from "./pages/HelpAndSupport";
 import BridalMakeup from "./pages/public/BridalMakeup";
 import InsuranceServices from "./pages/public/InsuranceServices";
-
+import ReportIssue from "./pages/ReportIssue";
+import PersonalizedMatrimony from "./pages/public/PersonalizedMatrimony";
+import NriMatrimony from "./pages/public/NriMatrimony";
+import ChurchPartner from "./pages/public/ChurchPartner";
+import MatrimonialAdvisor from "./pages/public/MatrimonialAdvisor";
+import MaritalCounseling from "./pages/public/MaritalCounseling";
+import Blogs from "./pages/public/Blogs";
 // Component to handle page reloads
 function ReloadHandler() {
   const location = useLocation();
@@ -246,6 +252,15 @@ function App() {
         <Route path="/bridal-makeup" element={<BridalMakeup />} />
         <Route path="/insurance-services" element={<InsuranceServices />} />
         <Route path="/user/events-page" element={<Events />} />
+        
+        <Route path="/report-issue" element={<ReportIssue />} />
+
+        <Route path="/personalized-matrimony" element={<PersonalizedMatrimony />} />
+<Route path="/nri-matrimony" element={<NriMatrimony />} />
+<Route path="/church-partner" element={<ChurchPartner />} />
+<Route path="/matrimonial-advisor" element={<MatrimonialAdvisor />} />
+<Route path="/marital-counseling" element={<MaritalCounseling />} />
+<Route path="/user/blogs-page" element={<Blogs />} />
         
       </Routes>
     </Router>

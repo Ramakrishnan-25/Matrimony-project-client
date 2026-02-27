@@ -272,3 +272,21 @@ export const cancelUserPlan = async (userId, cancelData) => {
 //     throw error;
 //   }
 // };
+
+
+// ================= UPDATE AGVID SERVICE ================= //
+
+/**
+ * Update a user's agwid field to agvid
+ * @param {string} userId - ID of the user to update
+ * @returns {Promise} - Axios response
+ */
+export const updateAgvid = async (userId) => {
+  try {
+    const response = await userInstance.put(`/update-agvid/${userId}`);
+    return response;
+  } catch (error) {
+    console.error("Error updating agvid:", error);
+    throw error;
+  }
+};

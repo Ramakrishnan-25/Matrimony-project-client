@@ -93,6 +93,151 @@ const SocialLink = ({ icon, color, label, value }) => (
     <span style={{ color: "#333", fontWeight: "500" }}>{label}</span>
   </a>
 );
+
+// ----------------- VideoCard with small modal video -----------------
+function VideoCard({ videoUrl }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleCardClick = () => {
+    if (!videoUrl) {
+      alert("Please upload the video");
+      return;
+    }
+    setIsModalOpen(true);
+  };
+
+  return (
+    <>
+      {/* Inline Thumbnail Preview */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          border: "1px solid #e5e7eb",
+          borderRadius: "8px",
+          padding: "8px 10px",
+          width: "220px",
+          cursor: videoUrl ? "pointer" : "not-allowed",
+          background: "#f9fafb",
+          boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+        }}
+        onClick={handleCardClick}
+      >
+        {videoUrl ? (
+          <video
+            src={videoUrl}
+            style={{
+              width: "60px",
+              height: "60px",
+              objectFit: "cover",
+              borderRadius: "6px",
+            }}
+            muted
+            playsInline
+          />
+        ) : (
+          <i
+            className="fa fa-file-video-o"
+            style={{ fontSize: "20px", color: "#667eea" }}
+          ></i>
+        )}
+
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontSize: "13px", fontWeight: "500" }}>
+            SelfIntroduction.mp4
+          </span>
+          <span style={{ fontSize: "11px", color: "#6b7280" }}>
+            {videoUrl ? "Click to view video" : "No video uploaded"}
+          </span>
+        </div>
+
+        {videoUrl && (
+          <a
+            href={videoUrl}
+            download="SelfIntroduction.mp4"
+            style={{
+              marginLeft: "auto",
+              background: "#667eea",
+              color: "#fff",
+              padding: "3px 6px",
+              borderRadius: "4px",
+              fontSize: "11px",
+              textDecoration: "none",
+              fontWeight: "500",
+            }}
+            onClick={(e) => e.stopPropagation()} // prevent modal open
+          >
+            <i className="fa fa-download"></i>
+          </a>
+        )}
+      </div>
+
+      {/* Modal with Small Video */}
+      {isModalOpen && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0,0,0,0.6)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+          }}
+          onClick={() => setIsModalOpen(false)}
+        >
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: "8px",
+              padding: "20px",
+              width: "300px",      // 👈 small width
+              height: "480px",     // 👈 small height
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              position: "relative",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setIsModalOpen(false)}
+              style={{
+                position: "absolute",
+                top: "5px",
+                right: "5px",
+                background: "transparent",
+                border: "none",
+                fontSize: "20px",
+                cursor: "pointer",
+              }}
+            >
+              &times;
+            </button>
+
+            <video
+              src={videoUrl}
+              controls
+              autoPlay
+              style={{
+                width: "100%",    // fits container
+                height: "100%",   // fits container
+                borderRadius: "6px",
+                objectFit: "cover",
+              }}
+            />
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+
 const UserProfilePage = () => {
   const userId = localStorage.getItem("userId");
 
@@ -615,49 +760,11 @@ const UserProfilePage = () => {
                     </div>
                   </div>
 
-                {userInfo && (
+            {userInfo && (
   <ProfileSection title="Self Introduction Video" icon="fa-video">
-    <div style={{ position: "relative", display: "inline-block" }}>
-      {userInfo.selfIntroductionVideo ? (
-        <>
-          <video
-            src={userInfo.selfIntroductionVideo}
-            controls
-            style={{
-              width: "100%",
-              borderRadius: "10px",
-              maxHeight: "400px",
-            }}
-            onError={(e) => {
-              e.target.onerror = null; // prevent infinite loop
-              e.target.src = ""; // fallback, could be placeholder image
-            }}
-          />
-          {/* Download Button */}
-          <a
-            href={userInfo.selfIntroductionVideo}
-            download="SelfIntroduction.mp4"
-            style={{
-              position: "absolute",
-              bottom: "10px",
-              right: "10px",
-              padding: "6px 12px",
-              background: "#667eea",
-              color: "#fff",
-              borderRadius: "6px",
-              textDecoration: "none",
-            }}
-          >
-            Download
-          </a>
-        </>
-      ) : (
-        <p>No video uploaded yet.</p>
-      )}
-    </div>
+    <VideoCard videoUrl={userInfo.selfIntroductionVideo} />
   </ProfileSection>
 )}
-
                   {/* About Me Section */}
                   {userInfo?.aboutMe && (
                     <div className="col-12 mb-3">

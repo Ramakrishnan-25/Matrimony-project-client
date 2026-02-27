@@ -106,15 +106,31 @@ const Footer = () => {
             </ul>
           </div>
         </div>
-        <div className="row foot-count">
-          <p style={{ color: "white" }}>
-            Company name Site - Trusted by over thousands of Boys &amp; Girls
-            for successfull marriage.
-            {/* <a href="/user/user-sign-up" className="btn btn-primary btn-sm">
-              Join us today !
-            </a> */}
-          </p>
-        </div>
+    <div className="row foot-count">
+  <p style={{ color: "white" }}>
+    Company name Site - Designed and Developed by{" "}
+    <a
+      href="https://sensitive.co.in/"
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        color: "#9de2c7",
+        fontWeight: "bold",
+        textDecoration: "underline",   // 👈 Always underline
+        transition: "0.3s ease",
+        cursor: "pointer"
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.color = "#ffffff";   // Hover போது white
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.color = "#96f1c6";   // Normal color
+      }}
+    >
+      Sensitive Technologies
+    </a>.
+  </p>
+</div>
       </div>
     </section>
   );

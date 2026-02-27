@@ -34,3 +34,8 @@ export const getAllEvents = async () => {
   const  response = await axiosInstance.get(`/user-auth/get-events`);
   return response;
 };
+
+export const getAllPublishedBlogs = async () => {
+  const response = await axiosInstance.get(`/user-auth/get-blogs`);
+  return response;
+};

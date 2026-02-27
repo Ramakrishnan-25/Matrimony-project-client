@@ -729,9 +729,10 @@ const UserProfileEditPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [showVisibilityOptions, setShowVisibilityOptions] = useState(false);
-  const [videoFile, setVideoFile] = useState(null);
-const [videoPreview, setVideoPreview] = useState(null);
+ const [videoFile, setVideoFile] = useState(null);
+const [videoPreview, setVideoPreview] = useState(""); // local preview or existing video URL
 const [deleteVideoFlag, setDeleteVideoFlag] = useState(false);
+const [existingVideoUrl, setExistingVideoUrl] = useState(""); // video stored in DB
 
   // Hobbies options for checkboxes
   const hobbiesOptions = [
@@ -969,32 +970,43 @@ const [deleteVideoFlag, setDeleteVideoFlag] = useState(false);
 
           setFormData(loadedData);
 
-          if (userData.profileImage) {
-            setProfileImagePreview(userData.profileImage);
-          }
-
-          if (
-            userData.additionalImages &&
-            userData.additionalImages.length > 0
-          ) {
-            const existingImages = userData.additionalImages.map((url) => ({
-              url,
-              isExisting: true,
-            }));
-            setAdditionalImagePreviews(existingImages);
-            setExistingAdditionalImages(userData.additionalImages);
-          }
+          // ===========================
+        // Set profile image preview
+        // ===========================
+        if (userData.profileImage) {
+          setProfileImagePreview(userData.profileImage);
         }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-        alert("Error loading user data. Please try again.");
-      }
-    };
 
-    if (userId) {
-      fetchUserData();
+        // ===========================
+        // Set additional images
+        // ===========================
+        if (userData.additionalImages && userData.additionalImages.length > 0) {
+          const existingImages = userData.additionalImages.map((url) => ({
+            url,
+            isExisting: true,
+          }));
+          setAdditionalImagePreviews(existingImages);
+          setExistingAdditionalImages(userData.additionalImages);
+        }
+
+        // ===========================
+        // Set self-introduction video
+        // ===========================
+        if (userData.selfIntroductionVideo) {
+          setExistingVideoUrl(userData.selfIntroductionVideo);
+          setVideoPreview(userData.selfIntroductionVideo);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      alert("Error loading user data. Please try again.");
     }
-  }, [userId]);
+  };
+
+  if (userId) {
+    fetchUserData();
+  }
+}, [userId]);
 
   // Initialize country and state codes when formData changes
   useEffect(() => {
@@ -1135,16 +1147,146 @@ const [deleteVideoFlag, setDeleteVideoFlag] = useState(false);
   };
 
 
- const handleVideoChange = (e) => {
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsSubmitting(true);
+
+  try {
+    // ========================
+    // Step 1: Delete removed additional images from Cloudinary
+    // ========================
+    if (deletedAdditionalImages.length > 0) {
+      try {
+        const deleteResponse = await deleteAdditionalImages(userId, deletedAdditionalImages);
+        if (deleteResponse.status === 200) {
+          console.log("Deleted images successfully from Cloudinary");
+          setDeletedAdditionalImages([]);
+        }
+      } catch (deleteError) {
+        console.error("Error deleting images from Cloudinary:", deleteError);
+        alert("Error deleting some images. Continuing with profile update...");
+      }
+    }
+
+    // ========================
+    // Step 2: Build FormData
+    // ========================
+    const submitFormData = new FormData();
+
+    // Append all form fields
+    Object.keys(formData).forEach((key) => {
+      if (key === "hobbies") {
+        if (Array.isArray(formData[key]) && formData[key].length > 0) {
+          formData[key].forEach((hobby, index) => {
+            submitFormData.append(`hobbies[${index}]`, hobby);
+          });
+        } else {
+          submitFormData.append("hobbies", "");
+        }
+      } else {
+        submitFormData.append(key, formData[key] || "");
+      }
+    });
+
+    // ========================
+    // Step 3: Handle profile image
+    // ========================
+    if (profileImageFile) {
+      submitFormData.append("profileImage", profileImageFile);
+    }
+    if (deleteProfileImageFlag) {
+      submitFormData.append("deleteProfileImage", "true");
+    }
+
+    // ========================
+    // Step 4: Handle additional images
+    // ========================
+    if (additionalImageFiles.length > 0) {
+      additionalImageFiles.forEach((file) => {
+        submitFormData.append("additionalImages", file);
+      });
+    }
+
+    // Include existing additional images
+    if (existingAdditionalImages.length > 0) {
+      existingAdditionalImages.forEach((url, index) => {
+        submitFormData.append(`existingAdditionalImages[${index}]`, url);
+      });
+    }
+
+    // ========================
+    // Step 5: Handle self-introduction video
+    // ========================
+    if (videoFile) {
+      submitFormData.append("selfIntroductionVideo", videoFile);
+    }
+    if (deleteVideoFlag) {
+      submitFormData.append("deleteSelfIntroductionVideo", "true");
+    }
+
+    // ========================
+    // Step 6: Send FormData to backend
+    // ========================
+    console.log("Submitting form data...");
+    const response = await savePersonalInfo(submitFormData, userId);
+    console.log("Response:", response);
+
+    if (response.status === 200 || response.data?.success) {
+      alert("Profile updated successfully!");
+
+      // Clear video file state and update preview
+      setVideoFile(null);
+      setVideoPreview(response.data.data.selfIntroductionVideo || null);
+
+      // Reset flags and deleted images list
+      setHasUnsavedChanges(false);
+      setDeleteProfileImageFlag(false);
+      setDeletedAdditionalImages([]);
+
+      // Optional: navigate after update
+      setTimeout(() => {
+        navigate(`/user/user-profile-page`);
+      }, 500);
+    } else {
+      const errorMessage = response.data?.message || "Error updating profile. Please try again.";
+      alert(errorMessage);
+      console.error("Update failed:", response);
+    }
+  } catch (error) {
+    console.error("Error submitting profile:", error);
+    const errorMessage =
+      error.response?.data?.message || error.message || "Error updating profile. Please try again.";
+    alert(errorMessage);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
+// ========================
+// Warn user about unsaved changes
+// ========================
+useEffect(() => {
+  const handleBeforeUnload = (e) => {
+    if (hasUnsavedChanges) {
+      e.preventDefault();
+      e.returnValue = "";
+    }
+  };
+
+  window.addEventListener("beforeunload", handleBeforeUnload);
+  return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+}, [hasUnsavedChanges]);
+
+// ========================
+// Video handlers
+// ========================
+const handleVideoChange = (e) => {
   const file = e.target.files[0];
   if (file) {
     setHasUnsavedChanges(true);
     setVideoFile(file);
-    setDeleteVideoFlag(false); // reset delete flag if new video selected
-
-    // Create local preview
-    const url = URL.createObjectURL(file);
-    setVideoPreview(url);
+    setDeleteVideoFlag(false); // reset delete flag
+    setVideoPreview(URL.createObjectURL(file));
   }
 };
 
@@ -1152,145 +1294,146 @@ const handleDeleteVideo = () => {
   setHasUnsavedChanges(true);
   setVideoFile(null);
   setVideoPreview(null);
-  setDeleteVideoFlag(true); // mark for deletion in backend
+  setDeleteVideoFlag(true); // mark for deletion
 };
 
+// const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setIsSubmitting(true);  
 
+//     try {
+//       // Step 1: Delete additional images from Cloudinary if any were removed
+//       if (deletedAdditionalImages.length > 0) {
+//         console.log("Deleting images from Cloudinary:", deletedAdditionalImages);
+//         try {
+//           const deleteResponse = await deleteAdditionalImages(
+//             userId,
+//             deletedAdditionalImages,
+//           );
+//           if (deleteResponse.status === 200) {
+//             console.log("Images deleted successfully from Cloudinary");
+//             setDeletedAdditionalImages([]); // Clear the deleted images list
+//           }
+//         } catch (deleteError) {
+//           console.error("Error deleting images from Cloudinary:", deleteError);
+//           alert("Error deleting some images. Continuing with profile update...");
+//         }
+//       }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+//       // Step 2: Update the profile with remaining data
+//       const submitFormData = new FormData();
 
-    try {
-      // Step 1: Delete additional images from Cloudinary if any were removed
-      if (deletedAdditionalImages.length > 0) {
-        console.log("Deleting images from Cloudinary:", deletedAdditionalImages);
-        try {
-          const deleteResponse = await deleteAdditionalImages(
-            userId,
-            deletedAdditionalImages,
-          );
-          if (deleteResponse.status === 200) {
-            console.log("Images deleted successfully from Cloudinary");
-            setDeletedAdditionalImages([]); // Clear the deleted images list
-          }
-        } catch (deleteError) {
-          console.error("Error deleting images from Cloudinary:", deleteError);
-          alert("Error deleting some images. Continuing with profile update...");
-        }
-      }
+//       // Append all form fields
+//       Object.keys(formData).forEach((key) => {
+//         if (key === "hobbies") {
+//           if (Array.isArray(formData[key]) && formData[key].length > 0) {
+//             formData[key].forEach((hobby, index) => {
+//               submitFormData.append(`hobbies[${index}]`, hobby);
+//             });
+//           } else {
+//             submitFormData.append("hobbies", "");
+//           }
+//         } else {
+//           const value = formData[key];
+//           submitFormData.append(key, value || "");
+//         }
+//       });
 
-      // Step 2: Update the profile with remaining data
-      const submitFormData = new FormData();
+//       // Append profile image if changed
+//       if (profileImageFile) {
+//         submitFormData.append("profileImage", profileImageFile);
+//       }
 
-      // Append all form fields
-      Object.keys(formData).forEach((key) => {
-        if (key === "hobbies") {
-          if (Array.isArray(formData[key]) && formData[key].length > 0) {
-            formData[key].forEach((hobby, index) => {
-              submitFormData.append(`hobbies[${index}]`, hobby);
-            });
-          } else {
-            submitFormData.append("hobbies", "");
-          }
-        } else {
-          const value = formData[key];
-          submitFormData.append(key, value || "");
-        }
-      });
+//       // Append delete profile image flag if needed
+//       if (deleteProfileImageFlag) {
+//         submitFormData.append("deleteProfileImage", "true");
+//       }
 
-      // Append profile image if changed
-      if (profileImageFile) {
-        submitFormData.append("profileImage", profileImageFile);
-      }
-
-      // Append delete profile image flag if needed
-      if (deleteProfileImageFlag) {
-        submitFormData.append("deleteProfileImage", "true");
-      }
-
-      // Append new additional images
-      if (additionalImageFiles.length > 0) {
-        additionalImageFiles.forEach((file) => {
-          submitFormData.append("additionalImages", file);
-        });
-      }
+//       // Append new additional images
+//       if (additionalImageFiles.length > 0) {
+//         additionalImageFiles.forEach((file) => {
+//           submitFormData.append("additionalImages", file);
+//         });
+//       }
       
 
-      // Append video if new
-if (videoFile) {
-  submitFormData.append("selfIntroductionVideo", videoFile);
-}
+//       // Append video if new
+// if (videoFile) {
+//   submitFormData.append("selfIntroductionVideo", videoFile);
+// }
 
-// Append delete flag if video removed
-if (deleteVideoFlag) {
-  submitFormData.append("deleteSelfIntroductionVideo", "true");
-}
+// // Append delete flag if video removed
+// if (deleteVideoFlag) {
+//   submitFormData.append("deleteSelfIntroductionVideo", "true");
+// }
 
 
 
-      // Append existing additional images that weren't removed
-      if (existingAdditionalImages.length > 0) {
-        existingAdditionalImages.forEach((url, index) => {
-          submitFormData.append(`existingAdditionalImages[${index}]`, url);
-        });
-      }
+//       // Append existing additional images that weren't removed
+//       if (existingAdditionalImages.length > 0) {
+//         existingAdditionalImages.forEach((url, index) => {
+//           submitFormData.append(`existingAdditionalImages[${index}]`, url);
+//         });
+//       }
 
-      console.log("Submitting form data...");
-      console.log(
-        "Form data to submit:",
-        Object.fromEntries(submitFormData.entries()),
-      );
+//       console.log("Submitting form data...");
+//       console.log(
+//         "Form data to submit:",
+//         Object.fromEntries(submitFormData.entries()),
+//       );
 
-      const response = await savePersonalInfo(submitFormData, userId);
+//       const response = await savePersonalInfo(submitFormData, userId);
 
-      console.log("Response:", response);
+//       console.log("Response:", response);
 
-      if (response.status === 200 || response.data?.success) {
-        setHasUnsavedChanges(false);
-        setDeleteProfileImageFlag(false);
-        setDeletedAdditionalImages([]); // Clear the deleted images list
-        alert("Profile updated successfully!");
+//       if (response.status === 200 || response.data?.success) {
+//         setHasUnsavedChanges(false);
+//         setDeleteProfileImageFlag(false);
+//         setDeletedAdditionalImages([]); // Clear the deleted images list
+//         alert("Profile updated successfully!");
 
-        // Small delay before navigation to ensure alert is seen
-        setTimeout(() => {
-          navigate(`/user/user-profile-page`);
-        }, 500);
-      } else {
-        const errorMessage =
-          response.data?.message || "Error updating profile. Please try again.";
-        alert(errorMessage);
-        console.error("Update failed:", response);
-      }
-    } catch (error) {
-      console.error("Error details:", error);
-      const errorMessage =
-        error.response?.data?.message ||
-        error.message ||
-        "Error updating profile. Please try again.";
-      alert(errorMessage);
+//         // Small delay before navigation to ensure alert is seen
+//         setTimeout(() => {
+//           navigate(`/user/user-profile-page`);
+//         }, 500);
+//       } else {
+//         const errorMessage =
+//           response.data?.message || "Error updating profile. Please try again.";
+//         alert(errorMessage);
+//         console.error("Update failed:", response);
+//       }
+//     } catch (error) {
+//       console.error("Error details:", error);
+//       const errorMessage =
+//         error.response?.data?.message ||
+//         error.message ||
+//         "Error updating profile. Please try again.";
+//       alert(errorMessage);
 
-      if (error.response) {
-        console.error("Response error:", error.response.data);
-        console.error("Response status:", error.response.status);
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+//       if (error.response) {
+//         console.error("Response error:", error.response.data);
+//         console.error("Response status:", error.response.status);
+//       }
+//     } finally {
+//       setIsSubmitting(false);
+//     }
+//   };
 
-  // Warn user about unsaved changes
-  useEffect(() => {
-    const handleBeforeUnload = (e) => {
-      if (hasUnsavedChanges) {
-        e.preventDefault();
-        e.returnValue = "";
-      }
-    };
+//   // Warn user about unsaved changes
+//   useEffect(() => {
+//     const handleBeforeUnload = (e) => {
+//       if (hasUnsavedChanges) {
+//         e.preventDefault();
+//         e.returnValue = "";
+//       }
+//     };
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [hasUnsavedChanges]);
+//     window.addEventListener("beforeunload", handleBeforeUnload);
+//     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+//   }, [hasUnsavedChanges]);
+
+
+
 
   return (
     <div style={{ minHeight: "100vh", background: "#f5f5f5" }}>
@@ -1355,16 +1498,16 @@ if (deleteVideoFlag) {
   <div style={{ display: "flex", alignItems: "center", gap: "20px", flexWrap: "wrap" }}>
     {videoPreview ? (
       <div style={{ position: "relative", display: "inline-block" }}>
-        <video
-          src={videoPreview}
-          controls
-          style={{
-            width: "300px",
-            borderRadius: "8px",
-            border: "1px solid #e5e7eb",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-          }}
-        />
+       <video
+  src={videoPreview}
+  controls
+  style={{
+    width: "200px", // smaller size
+    borderRadius: "8px",
+    border: "1px solid #e5e7eb",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+  }}
+/>
         {/* Delete Button */}
         <button
           type="button"

@@ -21,26 +21,26 @@ import GlobalSearchModal from "../../GlobalSearchModal";
 // ExploreDropdown Component - Redesigned as List
 const ExploreDropdown = ({ isVisible }) => {
   const categories = [
-    {
-      title: "Personalized Matrimony",
-      path: "#",
-    },
-    {
-      title: "NRI Matrimony",
-      path: "#",
-    },
-    {
-      title: "Churches - Partner with Us",
-      path: "#",
-    },
-    {
-      title: "Become a Matrimonial Advisor",
-      path: "#",
-    },
-    {
-      title: "Pre-Marital and Marital Counseling",
-      path: "#",
-    },
+   {
+  title: "Personalized Matrimony",
+  path: "/personalized-matrimony",
+},
+{
+  title: "NRI Matrimony",
+  path: "/nri-matrimony",
+},
+{
+  title: "Churches - Partner with Us",
+  path: "/church-partner",
+},
+{
+  title: "Become a Matrimonial Advisor",
+  path: "/matrimonial-advisor",
+},
+{
+  title: "Pre-Marital and Marital Counseling",
+  path: "/marital-counseling",
+},
     {
       title: "Bridal Make-up",
       path: "/bridal-makeup",
@@ -118,6 +118,43 @@ const ProfileDropdown = ({ isVisible, onLogout }) => {
   );
 };
 
+const HelpDropdown = ({ isVisible }) => {
+  const options = [
+    {
+      title: "Help & Support",
+      path: "/help-support",
+    },
+    {
+      title: "Report & Issue",
+      path: "/report-issue",
+    },
+  ];
+
+  const handleNavigate = (path) => {
+    window.location.href = path;
+  };
+
+  return (
+    <div
+      className={`absolute top-full left-0 mt-2 w-56 bg-white shadow-lg rounded-lg py-2 z-50 border border-gray-100 transition-all duration-300 ${
+        isVisible
+          ? "opacity-100 visible translate-y-0"
+          : "opacity-0 invisible translate-y-2"
+      }`}
+    >
+      {options.map((item, index) => (
+        <button
+          key={index}
+          onClick={() => handleNavigate(item.path)}
+          className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors font-medium border-b border-gray-50 last:border-0"
+        >
+          {item.title}
+        </button>
+      ))}
+    </div>
+  );
+};
+
 const MainLayout = () => {
   const userId = localStorage.getItem("userId");
   /* const location = useLocation(); */ // Removed unused var
@@ -136,6 +173,7 @@ const MainLayout = () => {
   ); // Initialize from storage
   /* const [isSearchModalOpen, setIsSearchModalOpen] = useState(false); */ // Removed unused var
   const [isUserActive, setIsUserActive] = useState(Boolean(userId));
+  const [isHelpDropdownVisible, setIsHelpDropdownVisible] = useState(false);
 
   useEffect(() => {
     // setIsUserActive(Boolean(userId)); // Removed to prevent double check/re-render logic if handled in init.
@@ -195,7 +233,7 @@ const MainLayout = () => {
                     {/* <Search className="w-4 h-4" /> */}
                   </div>
                 )}
-                <button onClick={() => handleNavigate("/blogs")}>
+                <button onClick={() => handleNavigate("/user/blogs-page")}>
                   BLOGS
                 </button>
               </div>
@@ -335,12 +373,24 @@ const MainLayout = () => {
               >
                 SUCCESS STORIES
               </button> */}
-              <button
+              {/* <button
                 onClick={() => handleNavigate("/help-support")}
                 className="text-gray-800 hover:text-purple-600 font-medium"
               >
                 HELP & SUPPORT
-              </button>
+              </button> */}
+
+              <div
+  className="relative"
+  onMouseEnter={() => setIsHelpDropdownVisible(true)}
+  onMouseLeave={() => setIsHelpDropdownVisible(false)}
+>
+  <button className="text-gray-800 hover:text-purple-600 font-medium flex items-center py-2">
+    HELP & SUPPORT <ChevronDown className="w-4 h-4 ml-1" />
+  </button>
+
+  <HelpDropdown isVisible={isHelpDropdownVisible} />
+</div>
               {/* <button
                 onClick={() => handleNavigate("/about-us")}
                 className="text-gray-800 hover:text-purple-600 font-medium"
