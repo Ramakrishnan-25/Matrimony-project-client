@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import axios from "axios";
 
 import Footer from "../components/Footer";
 import CopyRights from "../components/CopyRights";
@@ -6,6 +7,7 @@ import {
   savePersonalInfo,
   getUserInfo,
   deleteAdditionalImages,
+  uploadIdProof,
 } from "../api/axiosService/userAuthService";
 import { useParams, useNavigate } from "react-router-dom";
 import UserSideBar from "../components/UserSideBar";
@@ -734,6 +736,12 @@ const [videoPreview, setVideoPreview] = useState(""); // local preview or existi
 const [deleteVideoFlag, setDeleteVideoFlag] = useState(false);
 const [existingVideoUrl, setExistingVideoUrl] = useState(""); // video stored in DB
 
+  const [idProofFile, setIdProofFile] = useState(null);
+  const [idProofPreview, setIdProofPreview] = useState(null);
+  const [idVerificationStatus, setIdVerificationStatus] = useState("Pending");
+  const [idProofDocument, setIdProofDocument] = useState("");
+  const [isUploadingId, setIsUploadingId] = useState(false);
+
   // Hobbies options for checkboxes
   const hobbiesOptions = [
     "Reading",
@@ -995,6 +1003,14 @@ const [existingVideoUrl, setExistingVideoUrl] = useState(""); // video stored in
         if (userData.selfIntroductionVideo) {
           setExistingVideoUrl(userData.selfIntroductionVideo);
           setVideoPreview(userData.selfIntroductionVideo);
+        }
+
+        if (userData.idVerificationStatus) {
+          setIdVerificationStatus(userData.idVerificationStatus);
+        }
+        if (userData.idProofDocument) {
+          setIdProofDocument(userData.idProofDocument);
+          setIdProofPreview(userData.idProofDocument);
         }
       }
     } catch (error) {
@@ -1295,6 +1311,47 @@ const handleDeleteVideo = () => {
   setVideoFile(null);
   setVideoPreview(null);
   setDeleteVideoFlag(true); // mark for deletion
+};
+
+const handleIdProofChange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    setIdProofFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setIdProofPreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  }
+};
+
+const handleIdProofUpload = async () => {
+  if (!idProofFile) return;
+  setIsUploadingId(true);
+  try {
+    const formData = new FormData();
+    formData.append("idProof", idProofFile);
+    
+    // Using manual axios for direct control
+    const baseUrl = import.meta.env.VITE_BASE_ROUTE;
+    const url = `${baseUrl}/test-upload-id-proof/${userId}`;
+    console.log("HITTING TEST URL:", url);
+    
+    const response = await axios.post(url, formData, {
+      headers: { "Content-Type": "multipart/form-data" }
+    });
+
+    if (response.status === 200) {
+      alert("ID Proof uploaded successfully (via test route). It is now pending admin approval.");
+      setIdVerificationStatus("Uploaded");
+      setIdProofFile(null);
+    }
+  } catch (error) {
+    console.error("Error uploading ID proof (test route):", error);
+    alert("Error uploading ID proof. Please try again.");
+  } finally {
+    setIsUploadingId(false);
+  }
 };
 
 // const handleSubmit = async (e) => {
@@ -1651,6 +1708,141 @@ const handleDeleteVideo = () => {
         <p style={{ fontSize: "13px", color: "#6b7280", marginTop: "6px" }}>
           Upload a short self-introduction video
         </p>
+      </div>
+    )}
+  </div>
+</FormSection>
+
+<FormSection title="Government ID Verification">
+  <div style={{
+    background: "#f8fafc",
+    padding: "24px",
+    borderRadius: "12px",
+    border: "1px solid #e2e8f0"
+  }}>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px" }}>
+      <div>
+        <h4 style={{ fontSize: "16px", fontWeight: "600", color: "#1e293b", marginBottom: "4px" }}>
+          Verify your identity
+        </h4>
+        <p style={{ fontSize: "14px", color: "#64748b" }}>
+          Please upload a valid government-issued ID (Aadhar, PAN, Passport, etc.) for verification.
+        </p>
+      </div>
+      <div style={{
+        padding: "6px 12px",
+        borderRadius: "20px",
+        fontSize: "12px",
+        fontWeight: "700",
+        textTransform: "uppercase",
+        background: idVerificationStatus === "Verified" ? "#dcfce7" : idVerificationStatus === "Rejected" ? "#fee2e2" : idVerificationStatus === "Uploaded" ? "#fef9c3" : "#f1f5f9",
+        color: idVerificationStatus === "Verified" ? "#15803d" : idVerificationStatus === "Rejected" ? "#b91c1c" : idVerificationStatus === "Uploaded" ? "#854d0e" : "#475569",
+        border: "1px solid",
+        borderColor: idVerificationStatus === "Verified" ? "#86efac" : idVerificationStatus === "Rejected" ? "#fecaca" : idVerificationStatus === "Uploaded" ? "#fef08a" : "#cbd5e1"
+      }}>
+        {idVerificationStatus}
+      </div>
+    </div>
+
+    {idVerificationStatus === "Verified" ? (
+      <div style={{ display: "flex", alignItems: "center", gap: "12px", color: "#15803d", background: "#f0fdf4", padding: "16px", borderRadius: "8px", border: "1px solid #bbf7d0" }}>
+        <i className="fa fa-check-circle" style={{ fontSize: "20px" }}></i>
+        <div>
+          <p style={{ fontWeight: "600", margin: 0 }}>Your ID has been verified!</p>
+          <p style={{ fontSize: "13px", margin: 0 }}>A verified badge is now visible on your profile.</p>
+        </div>
+      </div>
+    ) : (
+      <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        {idProofPreview && (
+          <div style={{ position: "relative", width: "fit-content" }}>
+            {idProofDocument?.toLowerCase().endsWith(".pdf") || (idProofFile && idProofFile.type === "application/pdf") ? (
+              <div style={{
+                width: "200px",
+                height: "150px",
+                background: "#fff",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "8px",
+                border: "1px solid #e2e8f0",
+                color: "#64748b"
+              }}>
+                <i className="fa fa-file-pdf-o" style={{ fontSize: "40px", color: "#ef4444", marginBottom: "8px" }}></i>
+                <span style={{ fontSize: "12px", fontWeight: "600" }}>PDF Document</span>
+              </div>
+            ) : (
+              <img
+                src={idProofPreview}
+                alt="ID Proof Preview"
+                style={{
+                  width: "200px",
+                  borderRadius: "8px",
+                  border: "1px solid #e2e8f0",
+                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)"
+                }}
+              />
+            )}
+          </div>
+        )}
+
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <label style={{
+            padding: "10px 20px",
+            background: "#fff",
+            border: "2px dashed #cbd5e1",
+            borderRadius: "8px",
+            color: "#475569",
+            fontSize: "14px",
+            fontWeight: "600",
+            cursor: "pointer",
+            transition: "all 0.2s ease",
+            display: "inline-block"
+          }}>
+            <i className="fa fa-upload" style={{ marginRight: "8px" }}></i>
+            {idProofFile ? "Change File" : "Choose ID File"}
+            <input
+              type="file"
+              accept="image/*,.pdf"
+              onChange={handleIdProofChange}
+              style={{ display: "none" }}
+            />
+          </label>
+
+          {idProofFile && (
+            <button
+              type="button"
+              onClick={handleIdProofUpload}
+              disabled={isUploadingId}
+              style={{
+                padding: "10px 24px",
+                background: "#6366f1",
+                color: "#fff",
+                border: "none",
+                borderRadius: "8px",
+                fontSize: "14px",
+                fontWeight: "600",
+                cursor: isUploadingId ? "not-allowed" : "pointer",
+                boxShadow: "0 4px 6px -1px rgba(99, 102, 241, 0.4)",
+                transition: "all 0.2s ease"
+              }}
+            >
+              {isUploadingId ? (
+                <><i className="fa fa-spinner fa-spin" style={{ marginRight: "8px" }}></i> Uploading...</>
+              ) : (
+                "Upload & Submit"
+              )}
+            </button>
+          )}
+        </div>
+        
+        {idVerificationStatus === "Rejected" && (
+          <p style={{ fontSize: "13px", color: "#dc2626", fontWeight: "500", marginTop: "8px" }}>
+            <i className="fa fa-exclamation-circle" style={{ marginRight: "6px" }}></i>
+            Your previous document was rejected. Please upload a clear, valid ID.
+          </p>
+        )}
       </div>
     )}
   </div>

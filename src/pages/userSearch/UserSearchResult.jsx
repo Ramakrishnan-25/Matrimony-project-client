@@ -708,16 +708,18 @@ const UserSearchResult = () => {
                               paddingBottom: "8px",
                             }}
                           >
-                            <h5
-                              style={{
-                                color: "#C2185B",
-                                fontWeight: "bold",
-                                margin: 0,
-                                fontSize: "16px",
-                              }}
-                            >
-                              {user.agwid}
-                            </h5>
+                            <div className="d-flex align-items-center gap-2">
+                              <h5
+                                style={{
+                                  color: "#C2185B",
+                                  fontWeight: "bold",
+                                  margin: 0,
+                                  fontSize: "16px",
+                                }}
+                              >
+                                {user.agwid}
+                              </h5>
+                            </div>
                             <span
                               style={{
                                 fontSize: "13px",
@@ -752,6 +754,7 @@ const UserSearchResult = () => {
                                   borderRadius: "4px",
                                   border: "1px solid #eee",
                                   cursor: "pointer",
+                                  position: 'relative'
                                 }}
                                 onClick={() => handleViewProfile(user)}
                               >
@@ -762,6 +765,31 @@ const UserSearchResult = () => {
                                   }
                                   height="100%"
                                 />
+                                <div style={{
+                                  position: 'absolute',
+                                  top: '5px',
+                                  left: '5px',
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  gap: '4px',
+                                  zIndex: 10
+                                }}>
+                                  {user.isAnySubscriptionTaken && (
+                                    <div className="badge bg-warning text-dark p-1 shadow-sm" style={{ fontSize: '8px', borderRadius: '2px', border: '1px solid white' }}>
+                                      <i className="fa fa-star"></i>
+                                    </div>
+                                  )}
+                                  {user.idVerificationStatus === 'Verified' && (
+                                    <div className="badge bg-success p-1 shadow-sm" style={{ fontSize: '8px', borderRadius: '2px', border: '1px solid white' }}>
+                                      <i className="fa fa-check-circle"></i>
+                                    </div>
+                                  )}
+                                  {user.isPhoneVerified && (
+                                    <div className="badge bg-info text-white p-1 shadow-sm" style={{ fontSize: '8px', borderRadius: '2px', border: '1px solid white' }}>
+                                      <i className="fa fa-phone"></i>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                             </div>
 

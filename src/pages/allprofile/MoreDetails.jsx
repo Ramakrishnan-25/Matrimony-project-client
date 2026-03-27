@@ -2038,6 +2038,33 @@ const MoreDetails = () => {
                 <div className="zoom-btn" title="Zoom" onClick={() => setZoomImage(userInfo?.profileImage || profImage)}>
                   <i className="fa fa-search-plus"></i>
                 </div>
+
+                {/* Overlays */}
+                <div style={{
+                  position: 'absolute',
+                  top: '12px',
+                  left: '12px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px',
+                  zIndex: 10
+                }}>
+                  {userInfo?.isAnySubscriptionTaken && (
+                    <div className="badge bg-warning text-dark border border-white shadow-sm" style={{ padding: '6px 12px', fontSize: '11px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <i className="fa fa-star"></i> PREMIUM
+                    </div>
+                  )}
+                  {userInfo?.idVerificationStatus === 'Verified' && (
+                    <div className="badge bg-success border border-white shadow-sm" style={{ padding: '6px 12px', fontSize: '11px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <i className="fa fa-check-circle"></i> ID VERIFIED
+                    </div>
+                  )}
+                  {userInfo?.isPhoneVerified && (
+                    <div className="badge bg-info text-white border border-white shadow-sm" style={{ padding: '6px 12px', fontSize: '11px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <i className="fa fa-phone"></i> MOBILE VERIFIED
+                    </div>
+                  )}
+                </div>
               </div>
 
              
@@ -2105,8 +2132,25 @@ const MoreDetails = () => {
           {/* Right Column */}
           <div className="profile-right">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
-              <div className="agv-id" style={{ marginBottom: "0" }}>
+              <div className="agv-id" style={{ marginBottom: "0", display: 'flex', alignItems: 'center', gap: '10px' }}>
                 AGV ID: {userInfo?.agwid || "N/A"}
+                <div className="d-flex gap-2 ms-2">
+                  {userInfo?.isAnySubscriptionTaken && (
+                    <span className="badge rounded-pill bg-warning text-dark" style={{ fontSize: '12px', padding: '5px 12px' }}>
+                      <i className="fa fa-star me-1"></i>Premium
+                    </span>
+                  )}
+                  {userInfo?.idVerificationStatus === 'Verified' && (
+                    <span className="badge rounded-pill bg-success" style={{ fontSize: '12px', padding: '5px 12px' }}>
+                      <i className="fa fa-check-circle me-1"></i>ID Verified
+                    </span>
+                  )}
+                  {userInfo?.isPhoneVerified && (
+                    <span className="badge rounded-pill bg-info text-white" style={{ fontSize: '12px', padding: '5px 12px' }}>
+                      <i className="fa fa-phone me-1"></i>Phone Verified
+                    </span>
+                  )}
+                </div>
               </div>
               <button
                 className="start-chat-top-btn"

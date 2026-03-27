@@ -354,3 +354,19 @@ export const clearChatHistory = async (chatId) => {
     throw error;
   }
 };
+
+export const uploadIdProof = async (userId, file) => {
+  const formData = new FormData();
+  formData.append("idProof", file);
+
+  const response = await userInstance.post(
+    `/upload-id-proof/${userId}`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+  return response;
+};

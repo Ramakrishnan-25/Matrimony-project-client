@@ -154,19 +154,45 @@ const UserInterest = () => {
         <ul>
           {profileData.map((profile) => (
             <li key={profile._id}>
-              <div className="db-int-pro-1">
+              <div className="db-int-pro-1" style={{ position: 'relative' }}>
                 <img
                   src={
                     profile.senderDetails.profileImage ||
                     "images/profiles/default.jpg"
                   }
                   alt={profile.senderDetails.userName}
-                  style={{ width: "80px", height: "80px", objectFit: "cover" }}
+                  style={{ width: "80px", height: "80px", objectFit: "cover", borderRadius: '8px' }}
                 />
-                {/* You can add user plan badges here based on your logic */}
+                <div style={{
+                  position: 'absolute',
+                  top: '2px',
+                  left: '2px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '2px',
+                  zIndex: 10
+                }}>
+                  {profile.senderDetails.isAnySubscriptionTaken && (
+                    <div className="badge bg-warning text-dark p-1 shadow-sm" style={{ fontSize: '8px', borderRadius: '2px', border: '1px solid white' }}>
+                      <i className="fa fa-star"></i>
+                    </div>
+                  )}
+                  {profile.senderDetails.idVerificationStatus === 'Verified' && (
+                    <div className="badge bg-success p-1 shadow-sm" style={{ fontSize: '8px', borderRadius: '2px', border: '1px solid white' }}>
+                      <i className="fa fa-check-circle"></i>
+                    </div>
+                  )}
+                  {profile.senderDetails.isPhoneVerified && (
+                    <div className="badge bg-info p-1 shadow-sm" style={{ fontSize: '8px', borderRadius: '2px', border: '1px solid white' }}>
+                      <i className="fa fa-phone"></i>
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="db-int-pro-2">
-                <h5>{profile.senderDetails.userName}</h5>
+                <h5>
+                  {profile.senderDetails.userName}
+                </h5>
                 <ol className="poi">
                   <li>
                     City: <strong>{profile.senderDetails.city}</strong>

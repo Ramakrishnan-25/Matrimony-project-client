@@ -631,6 +631,33 @@ const UserProfilePage = () => {
                             }}
                           />
                         )}
+
+                        {/* Image Overlays */}
+                        <div style={{
+                          position: 'absolute',
+                          top: '10px',
+                          left: '0px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '4px',
+                          zIndex: 10
+                        }}>
+                          {userInfo?.isAnySubscriptionTaken && (
+                            <div className="badge bg-warning text-dark shadow-sm" style={{ padding: '4px 8px', fontSize: '9px', borderRadius: '4px', border: '1px solid white' }}>
+                              <i className="fa fa-star"></i>
+                            </div>
+                          )}
+                          {userInfo?.idVerificationStatus === 'Verified' && (
+                            <div className="badge bg-success shadow-sm" style={{ padding: '4px 8px', fontSize: '9px', borderRadius: '4px', border: '1px solid white' }}>
+                              <i className="fa fa-check-circle"></i>
+                            </div>
+                          )}
+                          {userInfo?.isPhoneVerified && (
+                            <div className="badge bg-info text-white shadow-sm" style={{ padding: '4px 8px', fontSize: '9px', borderRadius: '4px', border: '1px solid white' }}>
+                              <i className="fa fa-phone"></i>
+                            </div>
+                          )}
+                        </div>
                       </div>
                       <div
                         className="profile-info"
@@ -753,6 +780,63 @@ const UserProfilePage = () => {
                               >
                                 {visibility}
                               </span>
+
+                              {userInfo?.idVerificationStatus === "Verified" && (
+                                <span
+                                  className="badge"
+                                  style={{
+                                    padding: "6px 12px",
+                                    fontSize: "clamp(0.7rem, 2.5vw, 0.9rem)",
+                                    fontWeight: "600",
+                                    borderRadius: "20px",
+                                    background: "#dcfce7",
+                                    color: "#15803d",
+                                    border: "1px solid #86efac",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "4px"
+                                  }}
+                                >
+                                  <i className="fa fa-check-circle"></i>
+                                  ID Verified
+                                </span>
+                              )}
+
+                              {userInfo?.isAnySubscriptionTaken && (
+                                <span
+                                  className="badge bg-warning text-dark"
+                                  style={{
+                                    padding: "6px 12px",
+                                    fontSize: "clamp(0.7rem, 2.5vw, 0.9rem)",
+                                    fontWeight: "600",
+                                    borderRadius: "20px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "4px"
+                                  }}
+                                >
+                                  <i className="fa fa-star"></i>
+                                  Premium
+                                </span>
+                              )}
+
+                              {userInfo?.isPhoneVerified && (
+                                <span
+                                  className="badge bg-info text-white"
+                                  style={{
+                                    padding: "6px 12px",
+                                    fontSize: "clamp(0.7rem, 2.5vw, 0.9rem)",
+                                    fontWeight: "600",
+                                    borderRadius: "20px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "4px"
+                                  }}
+                                >
+                                  <i className="fa fa-phone"></i>
+                                  Phone Verified
+                                </span>
+                              )}
                             </div>
                           </div>
                         </div>

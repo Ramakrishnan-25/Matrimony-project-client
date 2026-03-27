@@ -484,6 +484,33 @@ const UserAllProfilePage = () => {
                                 </>
                               )}
                             </div>
+
+                            {/* Image Overlays */}
+                            <div className="pro-img-badges" style={{
+                              position: 'absolute',
+                              top: '10px',
+                              left: '10px',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: '6px',
+                              zIndex: 10
+                            }}>
+                              {user.isAnySubscriptionTaken && (
+                                <div className="badge bg-warning text-dark border border-white shadow-sm" style={{ padding: '4px 8px', fontSize: '10px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                  <i className="fa fa-star"></i> Premium
+                                </div>
+                              )}
+                              {user.idVerificationStatus === 'Verified' && (
+                                <div className="badge bg-success border border-white shadow-sm" style={{ padding: '4px 8px', fontSize: '10px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                  <i className="fa fa-check-circle"></i> ID Verified
+                                </div>
+                              )}
+                              {user.isPhoneVerified && (
+                                <div className="badge bg-info text-white border border-white shadow-sm" style={{ padding: '4px 8px', fontSize: '10px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                  <i className="fa fa-phone"></i> Verified Mobile
+                                </div>
+                              )}
+                            </div>
                           </div>
 
                           <div className="pro-detail">
