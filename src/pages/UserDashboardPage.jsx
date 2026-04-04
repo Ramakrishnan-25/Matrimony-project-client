@@ -16,6 +16,7 @@ import ProfileCompletion from "./userdashboard/ProfileCompletion";
 import RecentChats from "./userdashboard/RecentChats";
 import DashboardSearchComponent from "./userdashboard/DashboardSearchComponent";
 import ActivePlanCard from "./userdashboard/ActivePlanCard";
+import MembershipBadge from "../components/common/MembershipBadge";
 
 const UserDashboardPage = () => {
   const navigate = useNavigate();
@@ -43,7 +44,7 @@ const UserDashboardPage = () => {
             hasData: !!response.data?.data,
             dataKeys: response.data?.data ? Object.keys(response.data.data).length : 0,
           });
-          
+
           // Check if response has data
           if (response.data && response.data.data) {
             console.log("UserDashboard: Setting userInfo with data");
@@ -241,9 +242,9 @@ const UserDashboardPage = () => {
     console.log("My Dashboard Plan:", myPlanName);
     console.log("Target Dashboard Plan:", targetPlanName);
 
-    const isTargetRestricted = 
-      targetPlanName.includes("platinum") || 
-      targetPlanName.includes("gold") || 
+    const isTargetRestricted =
+      targetPlanName.includes("platinum") ||
+      targetPlanName.includes("gold") ||
       targetPlanName.includes("golden");
 
     if (myPlanName.includes("premium")) {
@@ -443,7 +444,25 @@ const UserDashboardPage = () => {
                       <ul className="slider" ref={sliderRef}>
                         {profileMatches.map((profile, index) => (
                           <li key={profile._id || index}>
-                            <div className="db-new-pro">
+                            <div className="db-new-pro" style={{ position: "relative", paddingTop: "10px" }}>
+                              {/* ✅ Badge - TOP CENTER */}
+                              <div style={{
+                                position: 'absolute',
+                                top: '-7000px',
+                                right: '150px',
+                                display: 'flex',
+                                flexDirection: 'column',
+
+                                gap: '6px',
+                                zIndex: 10,
+                                alignItems: 'flex-start',
+                                transform: "scale(0.98)", // optional resize
+                                transformOrigin: "top right"
+                              }}>
+                                <MembershipBadge user={profile} isMini={true} />
+                              </div>
+
+
                               <img
                                 src={
                                   profile.profileImage ||
@@ -451,12 +470,13 @@ const UserDashboardPage = () => {
                                 }
                                 alt={`${profile.userName}'s Profile`}
                                 className="profile"
+                                style={{ marginTop: "10px" }}
                                 onError={(e) => {
                                   e.target.src = "images/profiles/default.jpg";
                                 }}
                               />
                               <div>
-                             <h5>{profile.agwid || profile.userName}</h5>
+                                <h5>{profile.agwid || profile.userName}</h5>
                                 <span className="city mr-5">
                                   {profile.city}
                                 </span>
@@ -497,7 +517,7 @@ const UserDashboardPage = () => {
                 <div className="row">
                   <ProfileCompletion userData={userInfo} />
                   <PlanDetails />
-                  <ActivePlanCard/>
+                  <ActivePlanCard />
                   <RecentChats />
                 </div>
               </div>

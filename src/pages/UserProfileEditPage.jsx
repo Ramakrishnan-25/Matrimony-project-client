@@ -3734,7 +3734,7 @@ const handleIdProofUpload = async () => {
       </div>
 
       <Footer />
-      <CopyRights />
+      {/* <CopyRights /> */}
     </div>
   );
 };

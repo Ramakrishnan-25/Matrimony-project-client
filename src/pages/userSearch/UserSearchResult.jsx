@@ -14,6 +14,7 @@ import "react-toastify/dist/ReactToastify.css";
 import defaultProfileImg from "../../assets/images/blue-circle-with-white-user_78370-4707.avif";
 import maleDefault from "../../assets/images/profiles/men1.jpg";
 import femaleDefault from "../../assets/images/profiles/12.jpg";
+import MembershipBadge from "../../components/common/MembershipBadge";
 
 const UserCardImageSlider = ({ user, isAccepted, height = "220px" }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -771,14 +772,11 @@ const UserSearchResult = () => {
                                   left: '5px',
                                   display: 'flex',
                                   flexDirection: 'column',
-                                  gap: '4px',
-                                  zIndex: 10
+                                  gap: '6px',
+                                  zIndex: 10,
+                                  alignItems: 'flex-start'
                                 }}>
-                                  {user.isAnySubscriptionTaken && (
-                                    <div className="badge bg-warning text-dark p-1 shadow-sm" style={{ fontSize: '8px', borderRadius: '2px', border: '1px solid white' }}>
-                                      <i className="fa fa-star"></i>
-                                    </div>
-                                  )}
+                                  <MembershipBadge user={user} isMini={true} />
                                   {user.idVerificationStatus === 'Verified' && (
                                     <div className="badge bg-success p-1 shadow-sm" style={{ fontSize: '8px', borderRadius: '2px', border: '1px solid white' }}>
                                       <i className="fa fa-check-circle"></i>

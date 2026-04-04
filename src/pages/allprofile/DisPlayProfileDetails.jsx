@@ -1,5 +1,6 @@
 import React from "react";
 import RelatedProfiles from "./RelatedProfiles";
+import MembershipBadge from "../../components/common/MembershipBadge";
 
 const DisPlayProfileDetails = ({
   profileData,
@@ -17,6 +18,7 @@ const DisPlayProfileDetails = ({
               {isAccepted
                 ? profileData.userName || "Name not available"
                 : profileData.agwid || "ID Hidden"}
+              <MembershipBadge user={profileData} />
             </h1>
             <div
               style={{

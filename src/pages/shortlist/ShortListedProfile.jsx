@@ -6,6 +6,7 @@ import Footer from "../../components/Footer";
 import CopyRights from "../../components/CopyRights";
 import { getShortListedProfileData } from "../../api/axiosService/userAuthService";
 import { useNavigate } from "react-router-dom";
+import MembershipBadge from "../../components/common/MembershipBadge";
 
 const ShortListedProfile = () => {
   const userId = localStorage.getItem("userId");
@@ -86,18 +87,40 @@ const ShortListedProfile = () => {
         <ul>
           {profileData.map((profile) => (
             <li key={profile._id}>
-              <div className="db-int-pro-1">
-                <img
-                  src={profile.profileImage || "images/profiles/default.jpg"}
-                  alt={profile.userName}
-                  style={{
-                    width: "80px",
-                    height: "80px",
-                    objectFit: "cover",
-                    borderRadius: "8px",
-                  }}
-                />
-              </div>
+             <div
+  className="db-int-pro-1"
+  style={{
+    position: "relative",
+    width: "80px",
+    height: "95px" // 👈 extra space for badge
+  }}
+>
+  {/* ✅ Badge - TOP CENTER */}
+  <div
+    style={{
+      position: "absolute",
+      top: "0px",
+      left: "50%",
+      transform: "translateX(-50%) scale(0.7)",
+      zIndex: 10
+    }}
+  >
+    <MembershipBadge user={profile} isMini={true} />
+  </div>
+
+  {/* ✅ Profile Image */}
+  <img
+    src={profile.profileImage || "images/profiles/default.jpg"}
+    alt={profile.userName}
+    style={{
+      width: "80px",
+      height: "80px",
+      objectFit: "cover",
+      borderRadius: "8px",
+      marginTop: "15px" // 👈 push image down
+    }}
+  />
+</div>
               <div className="db-int-pro-2">
                 <h5>{profile.userName}</h5>
                 <ol className="poi">
@@ -115,18 +138,24 @@ const ShortListedProfile = () => {
                   </li>
                 </ol>
                 <button
-                  onClick={() => handleViewProfile(profile._id)}
-                  className="cta-5"
-                  style={{
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    textDecoration: "underline",
-                    color: "inherit",
-                  }}
-                >
-                  View full profile
-                </button>
+  onClick={() => handleViewProfile(profile._id)}
+  className="cta-5"
+  style={{
+    backgroundColor: "#ff5e62",
+    color: "#fff",
+    border: "none",
+    padding: "5px 10px",
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontSize: "0.85rem",
+    fontWeight: "500",
+    transition: "0.3s ease"
+  }}
+  onMouseOver={(e) => (e.target.style.backgroundColor = "#e14b50")}
+  onMouseOut={(e) => (e.target.style.backgroundColor = "#ff5e62")}
+>
+  View Full Profile
+</button>
               </div>
             </li>
           ))}
@@ -218,8 +247,8 @@ const ShortListedProfile = () => {
                             {/* Who Shortlisted You Tab */}
                             <div
                               className={`tab-pane fade ${activeTab === "whoShortlisted"
-                                  ? "show active"
-                                  : ""
+                                ? "show active"
+                                : ""
                                 }`}
                             >
                               {renderProfileList(profileDataWhoShortlisted)}

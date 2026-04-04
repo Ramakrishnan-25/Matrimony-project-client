@@ -478,6 +478,7 @@ import React, { useEffect, useState } from "react";
 import { getUserProfile } from "../api/axiosService/userAuthService";
 import profImage from "../assets/images/blue-circle-with-white-user_78370-4707.avif";
 import { Link } from "react-router-dom";
+import MembershipBadge from "./common/MembershipBadge";
 
 const UserSideBar = ({ sidebarTop = "115px" }) => {
   const userId = localStorage.getItem("userId");
@@ -711,6 +712,10 @@ const UserSideBar = ({ sidebarTop = "115px" }) => {
                 </button>
               </>
             )}
+          </div>
+
+          <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'center' }}>
+            <MembershipBadge user={userInfo} />
           </div>
 
           {/* <div style={styles.userName}>{userInfo?.name || "User"}</div> */}

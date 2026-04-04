@@ -10,6 +10,7 @@ import {
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ShowInterest from "./ShowInterest";
+import MembershipBadge from "../../components/common/MembershipBadge";
 
 const UserAllProfilePage = () => {
   const userId = localStorage.getItem("userId");
@@ -495,11 +496,7 @@ const UserAllProfilePage = () => {
                               gap: '6px',
                               zIndex: 10
                             }}>
-                              {user.isAnySubscriptionTaken && (
-                                <div className="badge bg-warning text-dark border border-white shadow-sm" style={{ padding: '4px 8px', fontSize: '10px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                  <i className="fa fa-star"></i> Premium
-                                </div>
-                              )}
+                              <MembershipBadge user={user} isMini={true} />
                               {user.idVerificationStatus === 'Verified' && (
                                 <div className="badge bg-success border border-white shadow-sm" style={{ padding: '4px 8px', fontSize: '10px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                                   <i className="fa fa-check-circle"></i> ID Verified

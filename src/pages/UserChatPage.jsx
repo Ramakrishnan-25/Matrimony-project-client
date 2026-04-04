@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
+import { useNavigate } from "react-router-dom";
 import profile1 from "../assets/images/profiles/1.jpg";
 import profile2 from "../assets/images/profiles/2.jpg";
 import profile3 from "../assets/images/profiles/3.jpg";
@@ -9,6 +10,7 @@ import UserSideBar from "../components/UserSideBar";
 import LayoutComponent from "../components/layouts/LayoutComponent";
 import Footer from "../components/Footer";
 import CopyRights from "../components/CopyRights";
+import MembershipBadge from "../components/common/MembershipBadge";
 import ChatUi from "../pages/allprofile/ChatUi";
 import {
   getMyChatList,
@@ -20,6 +22,7 @@ import {
 
 const UserChatPage = () => {
   const userId = localStorage.getItem("userId");
+  const navigate = useNavigate();
   const [chatList, setChatList] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -159,8 +162,8 @@ const UserChatPage = () => {
         alert("User blocked successfully! They will appear in the Blocked section.");
       }
     } catch (error) {
-       console.error("Error blocking user:", error);
-       alert("Failed to block user.");
+      console.error("Error blocking user:", error);
+      alert("Failed to block user.");
     }
   };
 
@@ -170,7 +173,7 @@ const UserChatPage = () => {
       if (response.status === 200) {
         setMessages([]);
         // Update last message in chat list
-        setChatList((prev) => prev.map(c => 
+        setChatList((prev) => prev.map(c =>
           c.chatId === chatId ? { ...c, lastMessage: null } : c
         ));
       }
@@ -256,16 +259,16 @@ const UserChatPage = () => {
   // Profile data for ChatUi
   const profileData = selectedChat
     ? {
-        userName: selectedChat.participant.name,
-        profileImage: selectedChat.participant.profileImage || profile1,
-        receiverId: selectedChat.participant._id,
-        isOnline: onlineUsers.includes(selectedChat.participant._id),
-      }
+      userName: selectedChat.participant.name,
+      profileImage: selectedChat.participant.profileImage || profile1,
+      receiverId: selectedChat.participant._id,
+      isOnline: onlineUsers.includes(selectedChat.participant._id),
+    }
     : {
-        userName: "User",
-        profileImage: profile1,
-        isOnline: false,
-      };
+      userName: "User",
+      profileImage: profile1,
+      isOnline: false,
+    };
 
   if (loading) {
     return (
@@ -277,7 +280,7 @@ const UserChatPage = () => {
           className="d-flex justify-content-center align-items-center"
           style={{ minHeight: "50vh", paddingTop: "115px" }}
         >
-          <div>Loading chats...</div>
+          <div>Loading Chats...</div>
         </div>
       </div>
     );
@@ -309,7 +312,7 @@ const UserChatPage = () => {
               >
                 <div className="row">
                   <div className="col-md-12 db-sec-com">
-                    <h2 className="db-tit">Chat list</h2>
+                    <h2 className="db-tit">Chat List</h2>
                     <div className="db-pro-stat">
                       <div className="db-chat">
                         <ul>
@@ -317,7 +320,7 @@ const UserChatPage = () => {
                             <li
                               style={{ textAlign: "center", padding: "20px" }}
                             >
-                              No chats available
+                              No Chats Available
                             </li>
                           ) : (
                             chatList.map((chat) => (
@@ -331,52 +334,101 @@ const UserChatPage = () => {
                                   className="db-chat-pro"
                                   style={{ position: "relative" }}
                                 >
-                                  <img
-                                    src={
-                                      chat.participant.profileImage || profile1
-                                    }
-                                    alt={chat.participant.name}
-                                    onError={(e) => {
-                                      e.target.src = profile1; // Fallback image
-                                    }}
-                                  />
+                                 <div
+  className="db-chat-pro"
+  style={{
+    position: "relative",
+    width: "50px",
+    height: "60px" // 👈 extra space for badge
+  }}
+>
+  {/* ✅ Badge - TOP CENTER */}
+  <div
+    style={{
+      position: "absolute",
+      top: "0px",
+      left: "50%",
+      transform: "translateX(-50%) scale(0.7)",
+      zIndex: 10
+    }}
+  >
+    <MembershipBadge user={chat.participant} isMini={true} />
+  </div>
+
+  {/* ✅ Profile Image (pushed down) */}
+  <img
+    src={chat.participant.profileImage || profile1}
+    alt={chat.participant.name}
+    onError={(e) => {
+      e.target.src = profile1;
+    }}
+    style={{
+      width: "50px",
+      height: "50px",
+      borderRadius: "50%",
+      objectFit: "cover",
+      marginTop: "20px" // 👈 space for badge
+    }}
+  />
+</div>
                                   {/* Online indicator */}
                                   {onlineUsers.includes(
                                     chat.participant._id,
                                   ) && (
-                                    <div
-                                      style={{
-                                        position: "absolute",
-                                        bottom: "2px",
-                                        right: "2px",
-                                        width: "12px",
-                                        height: "12px",
-                                        backgroundColor: "#4CAF50",
-                                        borderRadius: "50%",
-                                        border: "2px solid white",
-                                      }}
-                                    />
-                                  )}
-                                </div>
-                                <div className="db-chat-bio">
-                                  <h5>{chat.participant.name}</h5>
-                                  <span style={{ 
-                                    display: 'block', 
-                                    maxWidth: '180px', 
-                                    textOverflow: 'ellipsis', 
-                                    whiteSpace: 'nowrap', 
-                                    overflow: 'hidden' 
-                                  }}>
-                                    {chat?.lastMessage ? (
-                                      <>
-                                        <strong>{chat.lastMessage.isMyMessage ? "You: " : `${chat.participant.name.split(' ')[0]}: `}</strong>
-                                        {chat.lastMessage.message}
-                                      </>
-                                    ) : (
-                                      "No messages yet"
+                                      <div
+                                        style={{
+                                          position: "absolute",
+                                          bottom: "2px",
+                                          right: "2px",
+                                          width: "12px",
+                                          height: "12px",
+                                          backgroundColor: "#4CAF50",
+                                          borderRadius: "50%",
+                                          border: "2px solid white",
+                                        }}
+                                      />
                                     )}
-                                  </span>
                                 </div>
+                                  <div className="db-chat-bio">
+                                    <h5>{chat.participant.name}</h5>
+                                    <span style={{
+                                      display: 'block',
+                                      maxWidth: '180px',
+                                      textOverflow: 'ellipsis',
+                                      whiteSpace: 'nowrap',
+                                      overflow: 'hidden'
+                                    }}>
+                                      {chat?.lastMessage ? (
+                                        <>
+                                          <strong>{chat.lastMessage.isMyMessage ? "You: " : `${chat.participant.name.split(' ')[0]}: `}</strong>
+                                          {chat.lastMessage.message}
+                                        </>
+                                      ) : (
+                                        "No messages yet"
+                                      )}
+                                    </span>
+                                    <button
+  onClick={(e) => {
+    e.stopPropagation();
+    navigate(`/profile-more-details/${chat.participant._id}`);
+  }}
+  style={{
+    backgroundColor: "#ff5e62",
+    color: "#fff",
+    border: "none",
+    padding: "3px 8px",
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontSize: "0.8rem",
+    fontWeight: "500",
+    transition: "0.3s ease"
+  }}
+  onMouseOver={(e) => (e.target.style.backgroundColor = "#e14b50")}
+  onMouseOut={(e) => (e.target.style.backgroundColor = "#ff5e62")}
+>
+  View Full Profile
+</button>
+                                  </div>
                                 <div className="db-chat-info">
                                   <div className="time">
                                     <span className="timer">

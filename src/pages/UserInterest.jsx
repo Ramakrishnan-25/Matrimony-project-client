@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import UserSideBar from "../components/UserSideBar";
 import LayoutComponent from "../components/layouts/LayoutComponent";
@@ -8,9 +9,11 @@ import {
   getInterestedProfile,
   handleChangeInterestStatus,
 } from "../api/axiosService/userAuthService";
+import MembershipBadge from "../components/common/MembershipBadge";
 
 const UserInterest = () => {
   const userId = localStorage.getItem("userId");
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("pending");
   const [profileData, setProfileData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -154,41 +157,43 @@ const UserInterest = () => {
         <ul>
           {profileData.map((profile) => (
             <li key={profile._id}>
-              <div className="db-int-pro-1" style={{ position: 'relative' }}>
-                <img
-                  src={
-                    profile.senderDetails.profileImage ||
-                    "images/profiles/default.jpg"
-                  }
-                  alt={profile.senderDetails.userName}
-                  style={{ width: "80px", height: "80px", objectFit: "cover", borderRadius: '8px' }}
-                />
-                <div style={{
-                  position: 'absolute',
-                  top: '2px',
-                  left: '2px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '2px',
-                  zIndex: 10
-                }}>
-                  {profile.senderDetails.isAnySubscriptionTaken && (
-                    <div className="badge bg-warning text-dark p-1 shadow-sm" style={{ fontSize: '8px', borderRadius: '2px', border: '1px solid white' }}>
-                      <i className="fa fa-star"></i>
-                    </div>
-                  )}
-                  {profile.senderDetails.idVerificationStatus === 'Verified' && (
-                    <div className="badge bg-success p-1 shadow-sm" style={{ fontSize: '8px', borderRadius: '2px', border: '1px solid white' }}>
-                      <i className="fa fa-check-circle"></i>
-                    </div>
-                  )}
-                  {profile.senderDetails.isPhoneVerified && (
-                    <div className="badge bg-info p-1 shadow-sm" style={{ fontSize: '8px', borderRadius: '2px', border: '1px solid white' }}>
-                      <i className="fa fa-phone"></i>
-                    </div>
-                  )}
-                </div>
-              </div>
+             <div
+  className="db-int-pro-1"
+  style={{
+    position: "relative",
+    width: "80px",
+    height: "90px" // 👈 extra height for badge
+  }}
+>
+  {/* ✅ Badge on TOP (outside image) */}
+  <div
+    style={{
+      position: "absolute",
+      top: "0px",
+      left: "50%",
+      transform: "translateX(-50%) scale(0.7)",
+      zIndex: 10
+    }}
+  >
+    <MembershipBadge user={profile.senderDetails} isMini={true} />
+  </div>
+
+  {/* ✅ Image pushed DOWN */}
+  <img
+    src={
+      profile.senderDetails.profileImage ||
+      "images/profiles/default.jpg"
+    }
+    alt={profile.senderDetails.userName}
+    style={{
+      width: "80px",
+      height: "80px",
+      objectFit: "cover",
+      borderRadius: "8px",
+      marginTop: "20px" // 👈 space for badge
+    }}
+  />
+</div>
               <div className="db-int-pro-2">
                 <h5>
                   {profile.senderDetails.userName}
@@ -209,17 +214,17 @@ const UserInterest = () => {
                 </ol>
                 <ol className="poi poi-date">
                   <li>
-                    Request on: {new Date(profile.createdAt).toLocaleString()}
+                    Request On: {new Date(profile.createdAt).toLocaleString()}
                   </li>
                   {profile.status === "accepted" && (
                     <li>
-                      Accepted on:{" "}
+                      Accepted On:{" "}
                       {new Date(profile.updatedAt).toLocaleString()}
                     </li>
                   )}
                   {profile.status === "rejected" && (
                     <li>
-                      Rejected on:{" "}
+                      Rejected On:{" "}
                       {new Date(profile.updatedAt).toLocaleString()}
                     </li>
                   )}
@@ -229,9 +234,13 @@ const UserInterest = () => {
                     <strong>Message:</strong> {profile.message}
                   </p>
                 )}
-                <a href="#" className="cta-5" target="_blank">
-                  View full profile
-                </a>
+                <button
+                  type="button"
+                  onClick={() => navigate(`/profile-more-details/${profile.senderDetails._id}`)}
+                  className="cta-5"
+                >
+                  View Full Profile
+                </button>
               </div>
               <div className="db-int-pro-3">
                 {activeTab === "pending" && (
@@ -304,7 +313,7 @@ const UserInterest = () => {
               >
                 <div className="row">
                   <div className="col-md-12 db-sec-com">
-                    <h2 className="db-tit">Interest request</h2>
+                    <h2 className="db-tit">Interest Request</h2>
 
                     {/* Notification Display */}
                     {renderNotification()}
@@ -324,22 +333,22 @@ const UserInterest = () => {
                         <ul className="dropdown-menu">
                           <li>
                             <a className="dropdown-item" href="#">
-                              Edit profile
+                              Edit Profile
                             </a>
                           </li>
                           <li>
                             <a className="dropdown-item" href="#">
-                              View profile
+                              View Profile
                             </a>
                           </li>
                           <li>
                             <a className="dropdown-item" href="#">
-                              Plan change
+                              Plan Change
                             </a>
                           </li>
                           <li>
                             <a className="dropdown-item" href="#">
-                              Download invoice now
+                              Download Invoice Now
                             </a>
                           </li>
                         </ul>

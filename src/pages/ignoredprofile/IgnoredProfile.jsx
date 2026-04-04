@@ -9,6 +9,7 @@ import {
   unignoreProfile,
 } from "../../api/axiosService/userAuthService";
 import { useNavigate } from "react-router-dom";
+import MembershipBadge from "../../components/common/MembershipBadge";
 
 const IgnoredProfile = () => {
   const userId = localStorage.getItem("userId");
@@ -103,18 +104,21 @@ const IgnoredProfile = () => {
           {profileData.map((profile) => (
             <li key={profile._id}>
               <div className="db-int-pro-1">
-                <img
-                  src={profile.profileImage || "images/profiles/default.jpg"}
-                  alt={profile.userName}
-                  style={{
-                    width: "80px",
-                    height: "80px",
-                    objectFit: "cover",
-                    borderRadius: "8px",
-                    opacity: "0.6",
-                  }}
-                />
-              </div>
+                 <img
+                   src={profile.profileImage || "images/profiles/default.jpg"}
+                   alt={profile.userName}
+                   style={{
+                     width: "80px",
+                     height: "80px",
+                     objectFit: "cover",
+                     borderRadius: "8px",
+                     opacity: "0.6",
+                   }}
+                 />
+                 <div style={{ position: 'absolute', top: '2px', left: '2px', zIndex: 10 }}>
+                   <MembershipBadge user={profile} isMini={true} />
+                 </div>
+               </div>
               <div className="db-int-pro-2">
                 <h5>
                   {profile.userName}

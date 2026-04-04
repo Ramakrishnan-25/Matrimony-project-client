@@ -524,10 +524,10 @@ const getRemainingDays = (validFrom, validTo) => {
 
                   {/* ================= PLAN DETAILS ================= */}
                   <div className="col-md-4 db-sec-com">
-                    <h2 className="db-tit">Plan details</h2>
+                    <h2 className="db-tit">Plan Details</h2>
 
                     <div className="db-pro-stat">
-                      <h6 className="tit-top-curv">Current plan</h6>
+                      <h6 className="tit-top-curv">Current Plan</h6>
 
                       <div className="db-plan-card">
                         <img src={planIcon} alt="" />
@@ -538,7 +538,7 @@ const getRemainingDays = (validFrom, validTo) => {
                           <p>Loading...</p>
                         ) : !planData ? (
                           <div>
-                            <p style={{ color: "red" }}>❌ No active subscription</p>
+                            <p style={{ color: "red" }}>❌ No Active Subscription</p>
                             <a href="/user/user-plan-selection" className="cta-3">
                               Subscribe Now
                             </a>
@@ -580,7 +580,7 @@ const getRemainingDays = (validFrom, validTo) => {
 
                   {/* ================= INVOICE ================= */}
                   <div className="col-md-8 db-sec-com">
-                    <h2 className="db-tit">All invoice</h2>
+                    <h2 className="db-tit">All Invoice</h2>
 
                     <div
                       className="db-invoice"
@@ -597,7 +597,7 @@ const getRemainingDays = (validFrom, validTo) => {
                       >
                         <thead>
                           <tr>
-                            <th>Plan type</th>
+                            <th>Plan Type</th>
                             <th>Duration</th>
                             <th>Cost</th>
                             <th>Status</th>
@@ -629,7 +629,7 @@ const getRemainingDays = (validFrom, validTo) => {
                           ) : (
                             <tr>
                               <td colSpan="5" style={{ textAlign: "center" }}>
-                                No invoices found
+                                No Invoices Found
                               </td>
                             </tr>
                           )}

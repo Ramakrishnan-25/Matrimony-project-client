@@ -7,6 +7,7 @@ import CopyRights from "../components/CopyRights";
 import { getUserProfile } from "../api/axiosService/userAuthService";
 import profImage from "../assets/images/blue-circle-with-white-user_78370-4707.avif";
 import LayoutComponent from "../components/layouts/LayoutComponent";
+import MembershipBadge from "../components/common/MembershipBadge";
 
 // Helper Components
 const InfoRow = ({ label, value }) => {
@@ -642,11 +643,7 @@ const UserProfilePage = () => {
                           gap: '4px',
                           zIndex: 10
                         }}>
-                          {userInfo?.isAnySubscriptionTaken && (
-                            <div className="badge bg-warning text-dark shadow-sm" style={{ padding: '4px 8px', fontSize: '9px', borderRadius: '4px', border: '1px solid white' }}>
-                              <i className="fa fa-star"></i>
-                            </div>
-                          )}
+                          <MembershipBadge user={userInfo} isMini={true} />
                           {userInfo?.idVerificationStatus === 'Verified' && (
                             <div className="badge bg-success shadow-sm" style={{ padding: '4px 8px', fontSize: '9px', borderRadius: '4px', border: '1px solid white' }}>
                               <i className="fa fa-check-circle"></i>
@@ -769,6 +766,8 @@ const UserProfilePage = () => {
                                 {completionPercentage}% Completed
                               </span>
 
+                              <MembershipBadge user={userInfo} />
+
                               <span
                                 className="badge bg-info"
                                 style={{
@@ -802,23 +801,6 @@ const UserProfilePage = () => {
                                 </span>
                               )}
 
-                              {userInfo?.isAnySubscriptionTaken && (
-                                <span
-                                  className="badge bg-warning text-dark"
-                                  style={{
-                                    padding: "6px 12px",
-                                    fontSize: "clamp(0.7rem, 2.5vw, 0.9rem)",
-                                    fontWeight: "600",
-                                    borderRadius: "20px",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "4px"
-                                  }}
-                                >
-                                  <i className="fa fa-star"></i>
-                                  Premium
-                                </span>
-                              )}
 
                               {userInfo?.isPhoneVerified && (
                                 <span

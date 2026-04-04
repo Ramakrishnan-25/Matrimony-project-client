@@ -141,18 +141,31 @@ const BlockedProfile = () => {
                 </ol>
                 <div className="d-flex gap-2 align-items-center">
                   <button
-                    onClick={() => handleViewProfile(profile._id)}
-                    className="cta-5"
-                    style={{
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      textDecoration: "underline",
-                      color: "inherit",
-                    }}
-                  >
-                    View full profile
-                  </button>
+  onClick={() => handleViewProfile(profile._id)}
+  className="cta-5"
+  style={{
+    backgroundColor: "#ff5e62",
+    color: "#fff",
+    border: "none",
+    padding: "3px 8px",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontSize: "0.85rem",
+    fontWeight: "500",
+    display: "inline-block",
+    transition: "all 0.3s ease"
+  }}
+  onMouseEnter={(e) => {
+    e.target.style.backgroundColor = "#e14b50";
+    e.target.style.transform = "scale(1.05)";
+  }}
+  onMouseLeave={(e) => {
+    e.target.style.backgroundColor = "#ff5e62";
+    e.target.style.transform = "scale(1)";
+  }}
+>
+  View Full Profile
+</button>
                   <button
                     onClick={() => handleUnblockProfile(profile._id)}
                     className="btn btn-sm btn-outline-success"

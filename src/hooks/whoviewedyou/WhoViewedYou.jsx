@@ -6,6 +6,7 @@ import Footer from "../../components/Footer";
 import CopyRights from "../../components/CopyRights";
 import { getWhoViewedYouData } from "../../api/axiosService/userAuthService";
 import { useNavigate } from "react-router-dom";
+import MembershipBadge from "../../components/common/MembershipBadge";
 
 const WhoViewedYou = () => {
   const userId = localStorage.getItem("userId");
@@ -75,18 +76,40 @@ const WhoViewedYou = () => {
         <ul>
           {profileData.map((profile) => (
             <li key={profile._id}>
-              <div className="db-int-pro-1">
-                <img
-                  src={profile.profileImage || "images/profiles/default.jpg"}
-                  alt={profile.userName}
-                  style={{
-                    width: "80px",
-                    height: "80px",
-                    objectFit: "cover",
-                    borderRadius: "8px",
-                  }}
-                />
-              </div>
+              <div
+  className="db-int-pro-1"
+  style={{
+    position: "relative",
+    width: "100px",
+    height: "100px" // 👈 space for badge
+  }}
+>
+  {/* ✅ Badge - TOP CENTER */}
+  <div
+    style={{
+      position: "absolute",
+      top: "0px",
+      left: "50%",
+      transform: "translateX(-50%) scale(0.7)",
+      zIndex: 10
+    }}
+  >
+    <MembershipBadge user={profile} isMini={true} />
+  </div>
+
+  {/* ✅ Profile Image */}
+  <img
+    src={profile.profileImage || "images/profiles/default.jpg"}
+    alt={profile.userName}
+    style={{
+      width: "90px",
+      height: "90px",
+      objectFit: "cover",
+      borderRadius: "8px",
+      marginTop: "15px" // 👈 push image down
+    }}
+  />
+</div>
               <div className="db-int-pro-2">
                 <h5>{profile.userName}</h5>
                 <ol className="poi">
@@ -104,19 +127,25 @@ const WhoViewedYou = () => {
                   </li>
                 </ol>
                 <div className="d-flex gap-2 align-items-center">
-                  <button
-                    onClick={() => handleViewProfile(profile._id)}
-                    className="cta-5"
-                    style={{
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      textDecoration: "underline",
-                      color: "inherit",
-                    }}
-                  >
-                    View full profile
-                  </button>
+<button
+  onClick={() => handleViewProfile(profile._id)}
+  className="cta-5"
+  style={{
+    backgroundColor: "#e9e9e3ff",   // blue color
+    color: "#a934e3ff",
+    border: "none",
+    padding: "5px 10px",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontSize: "14px",
+    fontWeight: "500",
+    transition: "0.3s ease"
+  }}
+  onMouseOver={(e) => (e.target.style.backgroundColor = "#0056b3")}
+  onMouseOut={(e) => (e.target.style.backgroundColor = "#007bff")}
+>
+  View Full Profile
+</button>
                   {profile.viewedAt && (
                     <span
                       className="text-muted"
